@@ -7,5 +7,7 @@ autopublish
 insecure
 preserve-inputs
 accounts-base
-accounts-ui
 accounts-facebook
+bootstrap
+coffeescript
+accounts-ui
