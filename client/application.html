@@ -1,0 +1,66 @@
+<head>
+  <title>marq - instant surveys for validated learning</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+  {{> page}}
+</body>
+
+<template name="hello">
+  {{loginButtons align="left"}}
+  <h1>Hello Justin!</h1>
+  {{greeting}}
+  <input type="button" value="Click" />
+</template>
+
+<template name="page">
+  <div class="container">
+    <div class="row">
+      <div class="span12">
+        <div style="float: right">
+          {{loginButtons align="right"}}
+        </div>
+        <h3>
+          MARQ
+        </h3>
+      </div>
+    </div>
+    <hr/>
+    {{> createQuestion}}
+    <hr/>
+    {{> listQuestions}}
+  </div>
+</template>
+
+<template name="createQuestion">
+  <div class="row">
+    <div class="span12">
+      <label>Question</label>
+      <input type="text" class="question span5">
+      {{#if error}}
+        <div class="alert alert-error">{{error}}</div>
+      {{/if}}
+    </div>
+    <div class="span12">
+      <a href="#" class="btn btn-primary save">Add question</a>
+    </div>
+  </div>
+</template>
+
+<template name="listQuestions">
+  <h3>
+    {{questionCount}} Questions
+  </h3>
+  <div class="row">
+    <div class="span12">
+      {{#each questions}}
+        <div class="row">
+          <div class="span12">
+            {{question}}
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</template>
