@@ -10,7 +10,10 @@ Template.createQuestion.events
 		Meteor.call "createQuestion", {
 			question: question
 		}, (error, question) ->
-			if error then Session.set("createQuestionError", error.reason)
+			if error
+				Session.set("createQuestionError", error.reason)
+			else
+				Session.set("createQuestionError", null)
 
 Template.createQuestion.error = ->
 	Session.get "createQuestionError"
