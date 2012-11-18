@@ -14,18 +14,19 @@ Questions = new Meteor.Collection("questions")
 
 Questions.allow
   insert: (userId, question) ->
-    return false; # no cowboy inserts -- use createParty method
+    false # no cowboy inserts -- use createParty method
   
   update: (userId, questions, fields, modifier) ->
-    _.all questions, (question) ->
-      return false  if userId isnt question.owner # not the owner
-      allowed = ["question", "answerChoices"]
-      return false  if _.difference(fields, allowed).length # tried to write to forbidden field
+    false
+    # _.all questions, (question) ->
+    #   return false  if userId isnt question.owner # not the owner
+    #   allowed = ["question", "answerChoices"]
+    #   return false  if _.difference(fields, allowed).length # tried to write to forbidden field
       
-      # A good improvement would be to validate the type of the new
-      # value of the field (and if a string, the length.) In the
-      # future Meteor will have a schema system to makes that easier.
-      true
+    #   # A good improvement would be to validate the type of the new
+    #   # value of the field (and if a string, the length.) In the
+    #   # future Meteor will have a schema system to makes that easier.
+    #   true
 
   remove: (userId, questions) ->
     not _.any(questions, (question) ->
@@ -36,12 +37,16 @@ Questions.allow
 answerCount = (question) ->
   question.answers.length || 0
 
+objectifyAnswerChoices = (answerChoices) ->
+  _.map(answerChoices, (ac, i) -> {order: i+1, placeholder: ac, value: ac})
+
 Meteor.methods
   # options should include: question, answerChoices
   createQuestion: (options) ->
     options = options or {}
     throw new Meteor.Error(400, "question can't be blank")  unless typeof options.question is "string" and options.question.length
     throw new Meteor.Error(413, "Question too long")  if options.question.length > 140
+    throw new Meteor.Error(413, "Must be more than one answer choice")  if options.answerChoices.length < 2
     throw new Meteor.Error(403, "You must be logged in")  unless @userId
     
     Questions.insert
