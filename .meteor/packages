@@ -10,5 +10,5 @@ accounts-base
 accounts-facebook
 bootstrap
 coffeescript
-accounts-ui
-accounts-password
+accounts-ui-unstyled
+sass

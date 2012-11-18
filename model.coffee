@@ -9,6 +9,7 @@
 #   question: String
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
 #   answers: Array of objects like {user: userId, answer: "yes"} (or "no"/"don't care")
+#   votes: Array of objects like {user: userId, vote: "for"} (or "against")
 Questions = new Meteor.Collection("questions")
 
 Questions.allow
@@ -46,7 +47,7 @@ Meteor.methods
     Questions.insert
       owner: @userId
       question: options.question
-      answerChoices: ["yes", "no", "don't care"]
+      answerChoices: if options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
       answers: []
 
 ###############################################################################

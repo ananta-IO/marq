@@ -1,0 +1,33 @@
+<template name="newQuestion">
+  <div class="container">
+    <br/>
+    <br/>
+    <br/>
+    <div class="row">
+      <div class="span12">
+        {{#if error}}
+          <div class="alert alert-error">
+            {{error}}
+          </div>
+        {{/if}}
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <label>Question</label>
+        <input type="text" class="question span12" placeholder="What do you want to know?">
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <label>Answer Choice</label>
+        <input type="text" class="answer-choice span12" placeholder="yes">
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <a href="#" class="btn btn-primary save">Ask Question</a>
+      </div>
+    </div>
+  </div>
+</template>
