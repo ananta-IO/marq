@@ -44,15 +44,15 @@ Meteor.methods
   # options should include: question, answerChoices
   createQuestion: (options) ->
     options = options or {}
-    throw new Meteor.Error(400, "question can't be blank")  unless typeof options.question is "string" and options.question.length
-    throw new Meteor.Error(413, "Question too long")  if options.question.length > 140
-    throw new Meteor.Error(413, "Must be more than one answer choice")  if options.answerChoices.length < 2
+    throw new Meteor.Error(400, "Question can't be blank")  unless typeof options.question is "string" and options.question and options.question.length
+    throw new Meteor.Error(413, "Question too long")  if options.question and options.question.length > 140
+    throw new Meteor.Error(413, "There must be more than one answer choice")  if options.answerChoices and options.answerChoices.length > 0 and options.answerChoices.length < 2
     throw new Meteor.Error(403, "You must be logged in")  unless @userId
     
     Questions.insert
       owner: @userId
       question: options.question
-      answerChoices: if options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
+      answerChoices: if options.answerChoices and options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
       answers: []
 
 ###############################################################################
