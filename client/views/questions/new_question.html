@@ -1,57 +1,74 @@
 <template name="newQuestion">
-  <div class="container" id="new-question">
-    <div class="row">
+
+  <div class="container" id="new-question"> 
+
+    <div class="row-fluid">
       <div class="span12">
         <h2>
           Ask
         </h2>
       </div>
     </div>
-    <div class="row">
-      <div class="span12">
+
+    <div class="row-fluid">
+      <div class="span12 well">
+
         {{#if alert}}
-          {{#with alert}}
-            <div class="alert alert-{{type}}">
-              {{#if dismiss}}
-                <button type="button" class="close" data-dismiss="alert">×</button>
-              {{/if}}
-              {{message}}
+          <div class="row-fluid">
+            <div class="span12">
+                {{#with alert}}
+                  <div class="alert alert-{{type}}">
+                    {{#if dismiss}}
+                      <button type="button" class="close" data-dismiss="alert">×</button>
+                    {{/if}}
+                    {{message}}
+                  </div>
+                {{/with}}
             </div>
-          {{/with}}
+          </div>
         {{/if}}
-      </div>
-    </div>
-    <div class="row">
-      <div class="span12">
-        <label>Question</label>
-        <textarea rows="2" type="text" class="question span12" placeholder="What do you want to know?" name="question">{{question}}</textarea>
-        <span class="help-block">
-          Make it a multiple choice question. The default choices are Yes, No, and Don't Care.
-        </span>
-      </div>
-    </div>
-    <hr/>
-    <div class="row">
-      <div class="span12">
-        <div class="answer-choices">
-          <label>Answer Choices</label> 
-          {{#each objectifiedAnswerChoices}}
-            {{> newQuestionAnswerChoice}}
-          {{/each}}
-          <span class="help-block">
-            For simplicity all questions are multiple choice. The default answer choices are Yes, No, and Don't Care. Or you can write your own here.
-          </span>  
+
+        <div class="row-fluid">
+          <div class="span12">
+            <label>Question</label>
+            <textarea row-fluids="2" type="text" class="question span12" placeholder="What do you want to know?" name="question">{{question}}</textarea>
+            <span class="help-block">
+              Make it a multiple choice question. The default choices are Yes, No, and Don't Care.
+            </span>
+          </div>
         </div>
+
+        <hr/>
+
+        <div class="row-fluid">
+          <div class="span12">
+            <div class="answer-choices">
+              <label>Answer Choices</label> 
+              {{#each objectifiedAnswerChoices}}
+                {{> newQuestionAnswerChoice}}
+              {{/each}}
+              <span class="help-block">
+                For simplicity all questions are multiple choice. The default answer choices are Yes, No, and Don't Care. Or you can write your own here.
+              </span>  
+            </div>
+          </div>
+        </div>
+
+        <hr/>
+
+        <div class="row-fluid">
+          <div class="span12">
+            <button type="button" class="btn btn-primary btn-block btn-large save">Ask Question</button>
+          </div>
+        </div>
+
       </div>
     </div>
-    <hr/>
-    <div class="row">
-      <div class="span12">
-        <button type="button" class="btn btn-primary btn-block btn-large save">Ask Question</button>
-      </div>
-    </div>
+
   </div>
+
 </template>
+
 
 <template name="newQuestionAnswerChoice">
   <div class="input-prepend input-append answer-choice-wrap">
@@ -62,3 +79,4 @@
     {{/if}}
   </div>
 </template>
+

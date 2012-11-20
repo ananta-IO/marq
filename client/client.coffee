@@ -5,6 +5,11 @@
 
 Meteor.subscribe('questions')
 
+
+Template.answerQuestion.question = ->
+	Questions.findOne( { $or : [ { answers: { $size: 0 } } , {"answers.user" : { $ne : @userId } }] }, { sort: { voteTally: -1, createdAt: -1 } } )
+
+
 Template.newQuestion.events 
 	"click button.save": (event, template) ->
 		event.preventDefault()
@@ -48,8 +53,14 @@ Template.newQuestion.objectifiedAnswerChoices = ->
 	objectifiedAnswerChoices
 
 
+Template.listQuestions.events 
+	"click .questions-list .remove": (event, template) ->
+		event.preventDefault()
+		Questions.remove(event.currentTarget.getAttribute('data-questionId'))
+
+
 Template.listQuestions.questions = ->
-	Questions.find()
+	Questions.find({}, {sort: {createdAt: -1}})
 
 Template.listQuestions.questionCount = ->
 	Questions.find().count()

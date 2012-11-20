@@ -8,10 +8,11 @@
 #   owner: user id
 #   question: String
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
-#   answers: Array of objects like {user: userId, answer: "yes"} (or "no"/"don't care")
-#   votes: Array of objects like {user: userId, vote: "for"} (or "against")
+#   answers: Array of objects like {user: userId, answer: "yes", createdAt: Date} (or "no"/"don't care")
+#   answerCount: Integer count of answers
+#   votes: Array of objects like {user: userId, vote: "for", createdAt: Date} (or "against")
+#   voteTally: Integer count of for votes minus against votes
 #   createdAt: Date
-#   updatedAt: Date
 Questions = new Meteor.Collection("questions")
 
 Questions.allow
@@ -31,12 +32,13 @@ Questions.allow
     #   true
 
   remove: (userId, questions) ->
+    return true
     not _.any(questions, (question) ->
       # deny if not the owner, or if other people are going
-      question.owner isnt userId or answerCount(question) > 0
+      question.owner isnt userId or question.answerCount > 0
     )
 
-answerCount = (question) ->
+countAnswers = (question) ->
   question.answers.length || 0
 
 objectifyAnswerChoices = (answerChoices) ->
@@ -46,7 +48,7 @@ Meteor.methods
   # options should include: question, answerChoices
   createQuestion: (options) ->
     options = options or {}
-    throw new Meteor.Error(400, "Question can't be blank")  unless typeof options.question is "string" and options.question and options.question.length
+    throw new Meteor.Error(400, "Question can't be blank")  unless typeof options.question is "string" and options.question.length
     throw new Meteor.Error(413, "Question too long")  if options.question and options.question.length > 140
     throw new Meteor.Error(413, "There must be more than one answer choice")  if options.answerChoices and options.answerChoices.length > 0 and options.answerChoices.length < 2
     throw new Meteor.Error(403, "You must be logged in")  unless @userId
@@ -56,8 +58,22 @@ Meteor.methods
       question: options.question
       answerChoices: if options.answerChoices and options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
       answers: []
+      answerCount: 0
+      votes: []
+      voteTally: 0
       createdAt: new Date
-      updatedAt: new Date
+
+  # options should include: questionId, answer
+  answerQuestion: (options) ->
+    options = options or {}
+    throw new Meteor.Error(403, "You must be logged in")  unless @userId
+    question = Questions.findOne(questionId);
+    throw new Meteor.Error(404, "No such question")  unless question
+    # throw new Meteor.Error(400, "You have already answered this question")  unless @userId and #TODO
+    throw new Meteor.Error(400, "Answer can't be blank")  unless typeof options.answer is "string" and options.answer.length
+    throw new Meteor.Error(400, "Invalid answer")  unless _.contains(question.answerChoices, answer)
+    #TODO
+
 
 ###############################################################################
 ## Users

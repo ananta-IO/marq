@@ -1,17 +1,22 @@
 <template name="answerQuestion">
-	<div class="container" id="ask-question">
-		<div class="row">
+	<div class="container" id="answer-question">
+		<div class="row-fluid">
 			<div class="span12">
 				<h2>
 					Answer
 				<h2/>
 			</div>
 		</div>
-		<div class="row">
-			<div class="span12">
-				<p>
-					Answer a question here
-				<p/>
+		<div class="row-fluid">
+			<div class="span12 well">
+				<h3>
+					{{question.question}}
+				<h3/>
+				{{#each question.answerChoices}}
+					<p>
+						{{this}}
+					</p>
+				{{/each}}
 			</div>
 		</div>
 	</div>

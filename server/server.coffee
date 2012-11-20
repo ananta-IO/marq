@@ -18,4 +18,4 @@ Meteor.startup ->
 #	]
 
 Meteor.publish "questions", ->
-	Questions.find({}, {limit: 5, sort: {createdAt: -1}})
+	Questions.find()
