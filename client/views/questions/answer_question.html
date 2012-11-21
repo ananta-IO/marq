@@ -1,5 +1,6 @@
 <template name="answerQuestion">
-	<div class="container" id="answer-question">
+	<div class="container" id="answer-question" data-question="{{question._id}}">
+
 		<div class="row-fluid">
 			<div class="span12">
 				<h2>
@@ -7,17 +8,35 @@
 				<h2/>
 			</div>
 		</div>
+
 		<div class="row-fluid">
 			<div class="span12 well">
+
+				{{#if alert}}
+					<div class="row-fluid">
+						<div class="span12">
+							{{#with alert}}
+								<div class="alert alert-{{type}}">
+									{{#if dismiss}}
+										<button type="button" class="close" data-dismiss="alert">×</button>
+									{{/if}}
+									{{message}}
+								</div>
+							{{/with}}
+						</div>
+					</div>
+				{{/if}}
+
 				<h3>
 					{{question.question}}
 				<h3/>
 				{{#each question.answerChoices}}
 					<p>
-						{{this}}
+						<button class="btn btn-info answer" type="button" data-answer="{{this}}"><i class="icon-ok-sign icon-white"></i> {{this}}</button>
 					</p>
 				{{/each}}
 			</div>
 		</div>
+
 	</div>
 </template>

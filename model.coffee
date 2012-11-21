@@ -32,7 +32,6 @@ Questions.allow
     #   true
 
   remove: (userId, questions) ->
-    return true
     not _.any(questions, (question) ->
       # deny if not the owner, or if other people are going
       question.owner isnt userId or question.answerCount > 0
@@ -67,12 +66,16 @@ Meteor.methods
   answerQuestion: (options) ->
     options = options or {}
     throw new Meteor.Error(403, "You must be logged in")  unless @userId
-    question = Questions.findOne(questionId);
+    question = Questions.findOne(options.questionId)
     throw new Meteor.Error(404, "No such question")  unless question
-    # throw new Meteor.Error(400, "You have already answered this question")  unless @userId and #TODO
+    throw new Meteor.Error(400, "You have already answered this question")  if _.contains(_.pluck(question.answers, 'user'), @userId)
     throw new Meteor.Error(400, "Answer can't be blank")  unless typeof options.answer is "string" and options.answer.length
-    throw new Meteor.Error(400, "Invalid answer")  unless _.contains(question.answerChoices, answer)
-    #TODO
+    throw new Meteor.Error(400, "Invalid answer")  unless _.contains(question.answerChoices, options.answer)
+    # add new answer entry
+    Questions.update options.questionId, { 
+      $push: { answers: { user: @userId, answer: options.answer, createdAt: Date }},
+      $inc: { answerCount: 1 }
+    }
 
 
 ###############################################################################

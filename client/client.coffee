@@ -6,8 +6,24 @@
 Meteor.subscribe('questions')
 
 
+Template.answerQuestion.events 
+	"click button.answer": (event, template) ->
+		event.preventDefault()
+		Meteor.call "answerQuestion", {
+			questionId: $("#answer-question").attr('data-question')
+			answer: event.currentTarget.getAttribute('data-answer')
+		}, (error, question) ->
+			if error
+				Session.set("answerQuestionAlert", {type: 'error', message: error.reason})
+			else
+				Session.set("answerQuestionAlert", {type: 'success', message: 'We appreciate your answer. Please rate this question and answer a few more if you have time.', dismiss: true})
+
+
 Template.answerQuestion.question = ->
 	Questions.findOne( { $or : [ { answers: { $size: 0 } } , {"answers.user" : { $ne : @userId } }] }, { sort: { voteTally: -1, createdAt: -1 } } )
+
+Template.answerQuestion.alert = ->
+	Session.get "answerQuestionAlert"
 
 
 Template.newQuestion.events 
@@ -22,7 +38,7 @@ Template.newQuestion.events
 			if error
 				Session.set("newQuestionAlert", {type: 'error', message: error.reason})
 			else
-				Session.set("newQuestionAlert", {type: 'success', message: 'Success.', dismiss: true})
+				Session.set("newQuestionAlert", {type: 'success', message: 'Question successfully asked. We will automatically show your question to randomly selected people. But you will get the best results if you invite more people to answer your question.', dismiss: true})
 				Session.set("question", '')
 				Session.set("answerChoices", null)
 	
@@ -64,3 +80,7 @@ Template.listQuestions.questions = ->
 
 Template.listQuestions.questionCount = ->
 	Questions.find().count()
+
+Template.listQuestions.canRemove = ->
+	@owner == Meteor.userId()
+

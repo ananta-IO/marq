@@ -9,9 +9,12 @@
         {{#each questions}}
           <div class="row">
             <div class="span1">
+              {{answerCount}}
+            </div>
+            <div class="span1">
               {{voteTally}}
             </div>
-            <div class="span4">
+            <div class="span3">
               {{question}}
             </div>
             <div class="span3">
@@ -21,7 +24,9 @@
               {{createdAt}}
             </div>
             <div class="span1">
-              <button class="btn btn-danger remove" type="button" data-questionId="{{_id}}"><i class="icon-trash icon-white"></i></button>
+              {{#if canRemove}}
+                <button class="btn btn-danger remove" type="button" data-questionId="{{_id}}"><i class="icon-trash icon-white"></i></button>
+              {{/if}}
             </div>
           </div>
           <hr/>
