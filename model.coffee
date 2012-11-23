@@ -77,6 +77,21 @@ Meteor.methods
       $inc: { answerCount: 1 }
     }
 
+  # options should include: questionId, vote
+  rateQuestion: (options) ->
+    options = options or {}
+    throw new Meteor.Error(403, "Log in to rate this question")  unless @userId
+    question = Questions.findOne(options.questionId)
+    throw new Meteor.Error(404, "No such question")  unless question
+    throw new Meteor.Error(400, "You have already rated this question")  if _.contains(_.pluck(question.votes, 'user'), @userId)
+    throw new Meteor.Error(400, "Vote can't be blank")  unless typeof options.vote is "string" and options.vote.length
+    throw new Meteor.Error(400, "Invalid rating")  unless _.contains(['for', 'against'], options.vote)
+    if options.vote == 'for' then incValue = 1 else incValue = -1
+    # add new vote entry
+    Questions.update options.questionId, { 
+      $push: { votes: { user: @userId, vote: options.vote, createdAt: Date }},
+      $inc: { voteTally: incValue }
+    }
 
 ###############################################################################
 ## Users

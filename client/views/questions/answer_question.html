@@ -52,18 +52,20 @@
 </template>
 
 <template name="rateQuestion">
-	<h4>
-		{{question}}
-	</h4>
-	<!-- TODO show pie graph of answers -->
-	<p>
-		Was this a good question?
-		<button class="btn btn-success vote" type="button" data-vote="yes">
-			yes
-		</button>
-		&nbsp;
-		<button class="btn btn-danger vote" type="button" data-vote="no">
-			no
-		</button>
-	</p>
+	<div id="rate-question" data-question="{{_id}}">
+		<h4>
+			{{question}}
+		</h4>
+		<!-- TODO show pie graph of answers -->
+		<p>
+			Was this a good question?
+			<button class="btn btn-success vote" type="button" data-vote="for">
+				yes
+			</button>
+			&nbsp;
+			<button class="btn btn-danger vote" type="button" data-vote="against">
+				no
+			</button>
+		</p>
+	</div>
 </template>

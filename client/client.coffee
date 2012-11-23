@@ -24,8 +24,24 @@ Template.answerQuestion.events
 			if error
 				Session.set("answerQuestionAlert", {type: 'error', message: error.reason})
 			else
-				Session.set("answerQuestionAlert", {type: 'success', message: 'Please rate this question and answer a few more if you have time.', dismiss: true})
+				Session.set("answerQuestionAlert", {type: 'success', message: 'Thanks for your response. Please rate this question.', dismiss: true})
 				Session.set("previousQuestionId", questionId)
+
+	"click button.vote": (event, template) ->
+		event.preventDefault()
+		Session.set("answerQuestionAlert", null)
+		questionId = $("#rate-question").attr('data-question')
+		vote = event.currentTarget.getAttribute('data-vote')
+		#
+		Meteor.call "rateQuestion", {
+			questionId: questionId
+			vote: vote
+		}, (error, question) ->
+			if error
+				Session.set("answerQuestionAlert", {type: 'error', message: error.reason})
+			else
+				Session.set("answerQuestionAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
+				Session.set("previousQuestionId", null)
 
 
 Template.answerQuestion.question = ->
