@@ -4,41 +4,66 @@
 		<div class="row-fluid">
 			<div class="span12 well">
 
-				{{#if question}}
-					{{#if alert}}
-						<div class="row-fluid">
-							<div class="span12">
-								{{#with alert}}
-									<div class="alert alert-{{type}}">
-										{{#if dismiss}}
-											<button type="button" class="close" data-dismiss="alert">×</button>
-										{{/if}}
-										{{message}}
-									</div>
-								{{/with}}
-							</div>
+				{{#if alert}}
+					<div class="row-fluid">
+						<div class="span12">
+							{{#with alert}}
+								<div class="alert alert-{{type}}">
+									{{#if dismiss}}
+										<button type="button" class="close" data-dismiss="alert">×</button>
+									{{/if}}
+									{{message}}
+								</div>
+							{{/with}}
 						</div>
+					</div>
+				{{/if}}
+
+				{{#if previousQuestion}}
+					{{#with previousQuestion}}
+						{{> rateQuestion}}
+					{{/with}}
+				{{else}}
+
+					{{#if question}}
+						<h3>
+							{{question.question}}
+						<h3/>
+						<div class="answer-choices">
+							{{#each question.answerChoices}}
+								<p>
+									<button class="btn btn-info btn-block btn-large answer" type="button" data-answer="{{this}}">
+										<!-- <span class="marq"><span class="inner"></span></span> -->
+										{{this}}
+									</button>
+								</p>
+							{{/each}}
+						</div>
+					{{else}}
+						<p>You have answered every question. Why don't you ask a question.</p>
 					{{/if}}
 
-					<h3>
-						{{question.question}}
-					<h3/>
-					<!-- <span class="help-block"><small>select an answer</small></span> -->
-					<div class="answer-choices">
-						{{#each question.answerChoices}}
-							<p>
-								<button class="btn btn-info btn-block btn-large answer" type="button" data-answer="{{this}}">
-									{{this}}
-								</button>
-							</p>
-						{{/each}}
-					</div>
-				{{else}}
-					<p>You have answered every question. Why don't you ask a question.</p>
 				{{/if}}
 
 			</div>
 		</div>
 
 	</div>
+</template>
+
+<template name="rateQuestion">
+	<h4>
+		{{question}}
+	</h4>
+	<!-- TODO show pie graph of answers -->
+	<p>
+		Was this a good question?
+		<button class="btn btn-success vote" type="button" data-vote="yes">
+			yes
+		</button>
+		&nbsp;
+		<button class="btn btn-danger vote" type="button" data-vote="no">
+			no
+		</button>
+	</p>
 </template>

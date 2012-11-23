@@ -14,14 +14,18 @@ Template.answerQuestion.events
 	"click button.answer": (event, template) ->
 		event.preventDefault()
 		Session.set("answerQuestionAlert", null)
+		questionId = $("#answer-question").attr('data-question')
+		answer = event.currentTarget.getAttribute('data-answer')
+		#
 		Meteor.call "answerQuestion", {
-			questionId: $("#answer-question").attr('data-question')
-			answer: event.currentTarget.getAttribute('data-answer')
+			questionId: questionId
+			answer: answer
 		}, (error, question) ->
 			if error
 				Session.set("answerQuestionAlert", {type: 'error', message: error.reason})
 			else
-				Session.set("answerQuestionAlert", {type: 'success', message: 'We appreciate your answer. Please rate this question and answer a few more if you have time.', dismiss: true})
+				Session.set("answerQuestionAlert", {type: 'success', message: 'Please rate this question and answer a few more if you have time.', dismiss: true})
+				Session.set("previousQuestionId", questionId)
 
 
 Template.answerQuestion.question = ->
@@ -29,6 +33,9 @@ Template.answerQuestion.question = ->
 
 Template.answerQuestion.alert = ->
 	Session.get "answerQuestionAlert"
+
+Template.answerQuestion.previousQuestion = ->
+	Questions.findOne(Session.get("previousQuestionId"))
 
 
 ### New Question
@@ -95,7 +102,7 @@ Template.listQuestions.questionCount = ->
 	Questions.find().count()
 
 Template.listQuestions.canRemove = ->
-	@owner == Meteor.userId()
+	@owner == Meteor.userId() and @.answerCount == 0
 
 
 ### Misc.
