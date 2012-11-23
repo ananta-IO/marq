@@ -1,3 +1,5 @@
+### Config
+############################################################################################################
 # TODO: figure out how to store additional user info in the user profile and then ask for these additional scopes
 # Accounts.ui.config
 #   requestPermissions:
@@ -6,9 +8,12 @@
 Meteor.subscribe('questions')
 
 
+### Answer Question
+############################################################################################################
 Template.answerQuestion.events 
 	"click button.answer": (event, template) ->
 		event.preventDefault()
+		Session.set("answerQuestionAlert", null)
 		Meteor.call "answerQuestion", {
 			questionId: $("#answer-question").attr('data-question')
 			answer: event.currentTarget.getAttribute('data-answer')
@@ -26,9 +31,12 @@ Template.answerQuestion.alert = ->
 	Session.get "answerQuestionAlert"
 
 
+### New Question
+############################################################################################################
 Template.newQuestion.events 
 	"click button.save": (event, template) ->
 		event.preventDefault()
+		Session.set("newQuestionAlert", null)
 		question = Session.get 'question'
 		answerChoices = Session.get 'answerChoices'
 		Meteor.call "createQuestion", {
@@ -45,6 +53,9 @@ Template.newQuestion.events
 	"click .answer-choice-wrap .remove": (event, template) ->
 		event.preventDefault()
 		Session.set 'answerChoices', _.without(Session.get('answerChoices'), event.currentTarget.getAttribute('data-value'))
+
+	"keypress input.answer-choice": (event, template) ->
+		if (event.which == 13) then $(event.target).focusNextInputField()
 
 	"blur textarea.question": (event, template) ->
 		Session.set 'question', $.trim(event.currentTarget.value)
@@ -63,12 +74,14 @@ Template.newQuestion.objectifiedAnswerChoices = ->
 	answerChoices = Session.get 'answerChoices'
 	if answerChoices and answerChoices.length > 0
 		objectifiedAnswerChoices = objectifyAnswerChoices(answerChoices)
-		objectifiedAnswerChoices.push({order: answerChoices.length+1, placeholder: 'add another answer choice', value: ''}, {order: answerChoices.length+2, placeholder: 'add another answer choice', value: ''})
+		objectifiedAnswerChoices.push({order: answerChoices.length+1, placeholder: 'add another response', value: ''}, {order: answerChoices.length+2, placeholder: 'press enter to add another', value: ''})
 	else
 		objectifiedAnswerChoices = [{order: 1, placeholder: 'yes', value: ''}, {order: 2, placeholder: 'no', value: ''}, {order: 3, placeholder: "don't care", value: ''}]
 	objectifiedAnswerChoices
 
 
+### List Questions
+############################################################################################################
 Template.listQuestions.events 
 	"click .questions-list .remove": (event, template) ->
 		event.preventDefault()
@@ -83,4 +96,14 @@ Template.listQuestions.questionCount = ->
 
 Template.listQuestions.canRemove = ->
 	@owner == Meteor.userId()
+
+
+### Misc.
+############################################################################################################
+$.fn.focusNextInputField = ->
+  @each ->
+    fields = $(this).parents("form:eq(0),body").find("input,textarea,select")
+    index = fields.index(this)
+    fields.eq(index + 1).focus()  if index > -1 and (index + 1) < fields.length
+    false
 

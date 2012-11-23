@@ -48,9 +48,9 @@ Meteor.methods
   createQuestion: (options) ->
     options = options or {}
     throw new Meteor.Error(400, "Question can't be blank")  unless typeof options.question is "string" and options.question.length
-    throw new Meteor.Error(413, "Question too long")  if options.question and options.question.length > 140
-    throw new Meteor.Error(413, "There must be more than one answer choice")  if options.answerChoices and options.answerChoices.length > 0 and options.answerChoices.length < 2
-    throw new Meteor.Error(403, "You must be logged in")  unless @userId
+    throw new Meteor.Error(413, "Question is too long")  if options.question and options.question.length > 140
+    throw new Meteor.Error(413, "Add at least one more answer choice")  if options.answerChoices and options.answerChoices.length > 0 and options.answerChoices.length < 2
+    throw new Meteor.Error(403, "Log in to ask a question")  unless @userId
     
     Questions.insert
       owner: @userId
@@ -65,7 +65,7 @@ Meteor.methods
   # options should include: questionId, answer
   answerQuestion: (options) ->
     options = options or {}
-    throw new Meteor.Error(403, "You must be logged in")  unless @userId
+    throw new Meteor.Error(403, "Log in to answer this question")  unless @userId
     question = Questions.findOne(options.questionId)
     throw new Meteor.Error(404, "No such question")  unless question
     throw new Meteor.Error(400, "You have already answered this question")  if _.contains(_.pluck(question.answers, 'user'), @userId)

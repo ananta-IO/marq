@@ -1,18 +1,36 @@
 <template name="newQuestion">
 
+	<hr/>
 	<div class="container" id="new-question"> 
 
 		<div class="row-fluid">
-			<div class="span12">
-				<h2>
-					Ask
-				</h2>
-			</div>
-		</div>
-
-		<div class="row-fluid">
 			<div class="span12 well">
-				
+
+				<div class="row-fluid">
+					<div class="span12">
+						<label>Ask a Question</label>
+						<textarea row-fluids="2" type="text" class="question span12" placeholder="What do you want to know?" name="question">{{question}}</textarea>
+					</div>
+				</div>
+
+				<div class="row-fluid">
+					<div class="span12">
+						<div class="answer-choices">
+							<label>Add Response Choices</label> 
+							{{#each objectifiedAnswerChoices}}
+								{{> newQuestionAnswerChoice}}
+							{{/each}}
+							<span class="help-block">
+								<small>
+									For simplicity all questions are multiple choice. The default answer choices are Yes, No, and Don't Care. Or you can write your own here.
+								</small>
+							</span>  
+						</div>
+					</div>
+				</div>
+
+				<hr/>
+
 				{{#if alert}}
 					<div class="row-fluid">
 						<div class="span12">
@@ -27,34 +45,6 @@
 						</div>
 					</div>
 				{{/if}}
-
-				<div class="row-fluid">
-					<div class="span12">
-						<label>Question</label>
-						<textarea row-fluids="2" type="text" class="question span12" placeholder="What do you want to know?" name="question">{{question}}</textarea>
-						<span class="help-block">
-							Make it a multiple choice question. The default choices are Yes, No, and Don't Care.
-						</span>
-					</div>
-				</div>
-
-				<hr/>
-
-				<div class="row-fluid">
-					<div class="span12">
-						<div class="answer-choices">
-							<label>Answer Choices</label> 
-							{{#each objectifiedAnswerChoices}}
-								{{> newQuestionAnswerChoice}}
-							{{/each}}
-							<span class="help-block">
-								For simplicity all questions are multiple choice. The default answer choices are Yes, No, and Don't Care. Or you can write your own here.
-							</span>  
-						</div>
-					</div>
-				</div>
-
-				<hr/>
 
 				<div class="row-fluid">
 					<div class="span12">
