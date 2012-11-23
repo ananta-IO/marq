@@ -112,10 +112,10 @@ Template.listQuestions.events
 
 
 Template.listQuestions.questions = ->
-	Questions.find({}, {sort: {createdAt: -1}})
+	Questions.find({ owner: @userId }, { sort: { createdAt: -1 } })
 
 Template.listQuestions.questionCount = ->
-	Questions.find().count()
+	Template.listQuestions.questions().count()
 
 Template.listQuestions.canRemove = ->
 	@owner == Meteor.userId() and @.answerCount == 0
