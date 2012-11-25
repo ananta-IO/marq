@@ -8,11 +8,12 @@
 #   owner: user id
 #   question: String
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
-#   answers: Array of objects like {user: userId, answer: "yes", createdAt: Date} (or "no"/"don't care")
+#   answers: Array of objects like {user: userId, answer: "yes", createdAt: new Date} (or "no"/"don't care")
+#   answeredBy: Array of user ids like ["1", "2", "3"]
 #   answerCount: Integer count of answers
-#   votes: Array of objects like {user: userId, vote: "for", createdAt: Date} (or "against")
+#   votes: Array of objects like {user: userId, vote: "for", createdAt: new Date} (or "against")
 #   voteTally: Integer count of for votes minus against votes
-#   createdAt: Date
+#   createdAt: new Date
 Questions = new Meteor.Collection("questions")
 
 Questions.allow
@@ -40,6 +41,12 @@ Questions.allow
 countAnswers = (question) ->
   question.answers.length || 0
 
+tallyAnswers = (question) ->
+  tally = {}
+  _.each question.answers, (ans) ->
+    if tally[ans.answer] then tally[ans.answer] += 1 else tally[ans.answer] = 1
+  tally
+
 objectifyAnswerChoices = (answerChoices) ->
   _.map(answerChoices, (ac, i) -> {order: i+1, placeholder: ac, value: ac})
 
@@ -51,12 +58,14 @@ Meteor.methods
     throw new Meteor.Error(413, "Question is too long")  if options.question and options.question.length > 140
     throw new Meteor.Error(413, "Add at least one more answer choice")  if options.answerChoices and options.answerChoices.length > 0 and options.answerChoices.length < 2
     throw new Meteor.Error(403, "Log in to ask a question")  unless @userId
+    throw new Meteor.Error(400, "You have already asked this question")  if Questions.findOne({ owner: @userId, question: options.question })
     
     Questions.insert
       owner: @userId
       question: options.question
       answerChoices: if options.answerChoices and options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
       answers: []
+      answeredBy: []
       answerCount: 0
       votes: []
       voteTally: 0
@@ -73,9 +82,10 @@ Meteor.methods
     throw new Meteor.Error(400, "Invalid answer")  unless _.contains(question.answerChoices, options.answer)
     # add new answer entry
     Questions.update options.questionId, { 
-      $push: { answers: { user: @userId, answer: options.answer, createdAt: Date }},
+      $push: { answeredBy: @userId, answers: { user: @userId, answer: options.answer, createdAt: new Date }},
       $inc: { answerCount: 1 }
     }
+
 
   # options should include: questionId, vote
   rateQuestion: (options) ->
@@ -89,9 +99,10 @@ Meteor.methods
     if options.vote == 'for' then incValue = 1 else incValue = -1
     # add new vote entry
     Questions.update options.questionId, { 
-      $push: { votes: { user: @userId, vote: options.vote, createdAt: Date }},
+      $push: { votes: { user: @userId, vote: options.vote, createdAt: new Date }},
       $inc: { voteTally: incValue }
     }
+
 
 ###############################################################################
 ## Users

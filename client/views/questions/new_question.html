@@ -9,7 +9,7 @@
 				<div class="row-fluid">
 					<div class="span12">
 						<label>Ask a Question</label>
-						<textarea row-fluids="2" type="text" class="question span12" placeholder="What do you want to know?" name="question">{{question}}</textarea>
+						<textarea row-fluids="2" type="text" class="question span12" id="new-question-question" placeholder="What do you want to know?" name="question">{{question}}</textarea>
 					</div>
 				</div>
 
@@ -22,7 +22,7 @@
 							{{/each}}
 							<span class="help-block">
 								<small>
-									For simplicity all questions are multiple choice. The default answer choices are Yes, No, and Don't Care. Or you can write your own here.
+									For simplicity all questions are multiple choice. The default choices are Yes, No, and Don't Care. You can overwrite them above.
 								</small>
 							</span>  
 						</div>
@@ -48,7 +48,7 @@
 
 				<div class="row-fluid">
 					<div class="span12">
-						<button type="button" class="btn btn-primary btn-block btn-large save">Ask Question</button>
+						<button type="button" class="btn btn-primary btn-block btn-large save">Submit Question</button>
 					</div>
 				</div>
 

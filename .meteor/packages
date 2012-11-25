@@ -10,3 +10,5 @@ bootstrap
 coffeescript
 accounts-ui-unstyled
 stylus
+accounts-password
+d3
