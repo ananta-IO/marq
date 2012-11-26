@@ -1,0 +1,29 @@
+<template name="questionDialog">
+  <div class="mask"> </div>
+  <div class="modal question-dialog">
+    <div class="modal-header">
+      <button type="button" class="close done">&times;</button>
+      <h3>View Answer</h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="row-fluid">
+        <div class="span12">
+          <h4>
+            {{question.question}}
+          </h4>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span12">
+          <div class="chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a href="#" class="btn btn-primary done">Done</a>
+    </div>
+  </div>
+  <div class="modal-backdrop done"></div>
+</template>

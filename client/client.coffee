@@ -15,6 +15,33 @@ Template.footer.year = ->
 
 
 ############################################################################################################
+## Question Dialog
+Template.questionDialog.events 
+	# close
+	"click .done": (event, template) ->
+		event.preventDefault()
+		Session.set("showQuestionDialog", false)
+
+openQuestionDialog = (questionId) ->
+	Session.set("questionDialogQuestionId", questionId)
+	Session.set("showQuestionDialog", true)
+
+Template.page.showQuestionDialog = ->
+	Session.get("showQuestionDialog")
+
+Template.questionDialog.question = ->
+	Questions.findOne(Session.get("questionDialogQuestionId"))
+
+Template.questionDialog.rendered = ->
+	question = Questions.findOne(Session.get("questionDialogQuestionId"))
+	answersTally = tallyAnswers(question)
+	dataSet = []
+	_.map answersTally, (value, key) ->
+		dataSet.push {legendLabel: key, magnitude: value, link: "#"}
+	drawPie("PrimaryAnswerQuestionPie", dataSet, ".question-dialog .chart", "colorScale20", 10, 100, 30, 0)
+
+
+############################################################################################################
 ## Answer Question
 Template.answerQuestion.events 
 	# answer
@@ -70,7 +97,7 @@ Template.answerQuestion.rendered = ->
 	dataSet = []
 	_.map answersTally, (value, key) ->
 		dataSet.push {legendLabel: key, magnitude: value, link: "#"}
-	drawPie("PrimaryAnswerQuestionPie", dataSet, "#answer-question .chart", "colorScale20", 10, 100, 30, 0);
+	drawPie("PrimaryAnswerQuestionPie", dataSet, "#answer-question .chart", "colorScale20", 10, 100, 30, 0)
 
 
 ############################################################################################################
@@ -128,6 +155,10 @@ Template.listMyQuestions.events
 	"click .questions-list .remove": (event, template) ->
 		event.preventDefault()
 		Questions.remove(event.currentTarget.getAttribute('data-questionId'))
+
+	"click .questions-list .view-question": (event, template) ->
+		event.preventDefault()
+		openQuestionDialog(event.currentTarget.getAttribute('data-questionId'))
 
 
 Template.listMyQuestions.questions = ->

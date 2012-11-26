@@ -1,4 +1,8 @@
 <template name="page">
+	{{#if showQuestionDialog}}
+		{{> questionDialog}}
+	{{/if}}
+
 	{{> header}}
 	{{> answerQuestion}}
 	{{> newQuestion}}

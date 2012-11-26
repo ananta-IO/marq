@@ -22,7 +22,9 @@
 				{{#each questions}}
 					<tr>
 						<td>
-							{{question}}
+							<a class="view-question open-modal" data-questionId="{{_id}}">
+								{{question}}
+							</a>
 						</td>
 						<td>
 							{{answerCount}}
