@@ -3,7 +3,7 @@
 	<hr/>
 	<div class="container">
 		
-		<table class="table table-hover table-bordered">
+		<table class="table table-hover table-bordered questions-list">
 			<caption>
 				<h3>
 					You have answered {{questionCount}} questions
@@ -22,7 +22,9 @@
 				{{#each questions}}
 					<tr>
 						<td>
-							{{question}}
+							<a class="view-question open-modal" data-questionId="{{_id}}">
+								{{question}}
+							</a>
 						</td>
 						<td>
 							{{answer this}}

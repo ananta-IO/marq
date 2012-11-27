@@ -173,6 +173,11 @@ Template.listMyQuestions.canRemove = ->
 
 ############################################################################################################
 ## List Answered Questions
+Template.listAnsweredQuestions.events 
+	"click .questions-list .view-question": (event, template) ->
+		event.preventDefault()
+		openQuestionDialog(event.currentTarget.getAttribute('data-questionId'))
+		
 Template.listAnsweredQuestions.questions = ->
 	Questions.find({ answeredBy: @userId }, { sort: { voteTally: -1, createdAt: -1 } })
 
