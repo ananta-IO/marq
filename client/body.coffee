@@ -1,2 +1,2 @@
-Template.body.showQuestionDialog = ->
-	Session.get("showQuestionDialog")
+Template.body.showQuestionsDialog = ->
+	Session.get("showQuestionsDialog")

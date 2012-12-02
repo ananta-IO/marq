@@ -5,7 +5,7 @@ Template.questionsListMine.events
 
 	"click .questions-list .view-question": (event, template) ->
 		event.preventDefault()
-		openQuestionDialog(event.currentTarget.getAttribute('data-questionId'))
+		openQuestionsDialog(event.currentTarget.getAttribute('data-questionId'))
 
 
 Template.questionsListMine.questions = ->
