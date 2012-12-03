@@ -13,3 +13,6 @@ stylus
 d3
 accounts-password
 accounts-ui
+router
+moment
+spiderable
