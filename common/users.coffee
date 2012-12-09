@@ -1,3 +1,4 @@
+## Users
 isAdminById = (userId) ->
 	user = Meteor.users.findOne(userId)
 	user and isAdmin(user)

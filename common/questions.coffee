@@ -1,9 +1,4 @@
-## Marq -- data model
-## Loaded on both the client and the server
-
-###############################################################################
 ## Questions
-
 # Each question is represented by a document in the Questions collection:
 #   owner: user id
 #   question: String
@@ -34,7 +29,7 @@ Questions.allow
 
   remove: (userId, questions) ->
     not _.any(questions, (question) ->
-      # deny if not the owner, or if other people are going
+      # deny if not the owner, or if other people have already answered
       question.owner isnt userId or question.answerCount > 0
     )
 
@@ -55,8 +50,10 @@ Meteor.methods
   createQuestion: (options) ->
     options = options or {}
     throw new Meteor.Error(400, "Question can't be blank")  unless typeof options.question is "string" and options.question.length
-    throw new Meteor.Error(413, "Question is too long")  if options.question and options.question.length > 140
+    throw new Meteor.Error(413, "Question is too long (140 characters max)")  if options.question and options.question.length > 140
     throw new Meteor.Error(413, "Add at least one more answer choice")  if options.answerChoices and options.answerChoices.length > 0 and options.answerChoices.length < 2
+    throw new Meteor.Error(413, "Too many answer choice (5 max)")  if options.answerChoices and options.answerChoices.length > 5
+    throw new Meteor.Error(413, "At least one answer choice is too long (90 characters max)")  if options.answerChoices and _.contains(_.map(options.answerChoices, (ac) -> ac.length > 90 ), true)
     throw new Meteor.Error(403, "Log in to ask a question")  unless @userId
     throw new Meteor.Error(400, "You have already asked this question")  if Questions.findOne({ owner: @userId, question: options.question })
     
@@ -102,8 +99,3 @@ Meteor.methods
       $push: { votes: { user: @userId, vote: options.vote, createdAt: new Date }},
       $inc: { voteTally: incValue }
     }
-
-
-###############################################################################
-## Users
-  
