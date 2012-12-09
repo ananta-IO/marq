@@ -18,6 +18,13 @@ Accounts.onCreateUser (options, user) ->
 	unless Meteor.users.find().count()
 		user.isAdmin = true
 
-	trackEvent('new user', {username: user.username, email: user.profile.email})
+	# get profile data from Facebook
+	result = Meteor.http.get "https://graph.facebook.com/me",
+		params:
+			access_token: user.services.facebook.accessToken
+	# if successfully obtained facebook profile, save it off
+	user.profile.facebook = result.data  if not result.error and result.data
+
+	# trackEvent('new user', {username: user.username, email: user.profile.email})
 
 	return user

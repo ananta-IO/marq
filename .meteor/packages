@@ -11,8 +11,6 @@ coffeescript
 accounts-ui-unstyled
 stylus
 d3
-accounts-password
-accounts-ui
 router
 moment
 spiderable

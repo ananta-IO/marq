@@ -48,8 +48,9 @@ Template.questionsAnswer.previousQuestion = ->
 
 Template.questionsAnswer.rendered = ->
 	question = Questions.findOne(Session.get("previousQuestionId"))
-	answersTally = tallyAnswers(question)
-	dataSet = []
-	_.map answersTally, (value, key) ->
-		dataSet.push {legendLabel: key, magnitude: value, link: "#"}
-	drawPie("questionsAnswerPie", dataSet, "#answer-question .chart", "colorScale20", 10, 100, 30, 0)
+	if question
+		answersTally = tallyAnswers(question)
+		dataSet = []
+		_.map answersTally, (value, key) ->
+			dataSet.push {legendLabel: key, magnitude: value, link: "#"}
+		drawPie("questionsAnswerPie", dataSet, "#answer-question .chart", "colorScale20", 10, 100, 30, 0)

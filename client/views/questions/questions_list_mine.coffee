@@ -15,4 +15,4 @@ Template.questionsListMine.questionCount = ->
 	Questions.find({ owner: @userId }, { sort: { voteTally: -1, createdAt: -1 } }).count()
 
 Template.questionsListMine.canRemove = ->
-	@owner == Meteor.userId() and @.answerCount == 0
+	canRemoveQuestion(Meteor.userId(), @)
