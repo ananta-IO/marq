@@ -8,6 +8,7 @@
 #   answerCount: Integer count of answers
 #   votes: Array of objects like {user: userId, vote: "for", createdAt: new Date} (or "against")
 #   voteTally: Integer count of for votes minus against votes
+#	score: TODO Integer count of the aggregate score of a question
 #   createdAt: new Date
 Questions = new Meteor.Collection("questions")
 

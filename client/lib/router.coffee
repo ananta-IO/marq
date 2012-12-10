@@ -1,11 +1,18 @@
 (->
 
+	PAGE_SUBS =
+		questions_answer: 'answerQuestionsReady'
+		question_page: 'singleQuestionsReady'
+
 	Meteor.Router.add
 		"/": "questionsAnswer"
 		"/questions": "questionsListAnswered"
 		"/questions/new": "questionsNew"
 		"/questions/answer": "questionsAnswer"
 		"/profile": "questionsListMine"
+
+	awaitSubscription: (page) ->
+		if Session.equals(PAGE_SUBS[page], true) then page else 'loading'
 	
 	### START
 

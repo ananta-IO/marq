@@ -1,3 +1,5 @@
+# ** Users **
+
 Meteor.publish 'currentUser', ->
 	Meteor.users.find(@userId)
 
@@ -12,6 +14,7 @@ Meteor.publish 'allUsers', ->
 			emails: false
 			notifications: false
 			'profile.email': false
+			'profile.facebook': false
 			'services.twitter.accessToken': false
 			'services.twitter.accessTokenSecret': false
 			'services.twitter.id': false
@@ -22,9 +25,21 @@ Meteor.publish 'allUsers', ->
 		})
 
 
-Meteor.startup ->
-	# code to run on server at startup
+# ** Questions **
 
+# Meteor.publish "questions", ->
+#	Questions.find()
 
-Meteor.publish "questions", ->
-	Questions.find()
+Meteor.publish 'questions', (find, options, subName) ->
+	collection = Questions.find(find, options)
+	collectionArray = collection.fetch()
+
+	# if this is a single question subscription but no question ID is passed, just return an empty collection
+	if subName is "singleQuestion" and _.isEmpty(find)
+		collection = null
+		collectionArray = []
+
+	collection
+
+Meteor.publish 'question', (id) ->
+	Questions.find(id)
