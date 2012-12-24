@@ -1,21 +1,39 @@
 (->
 
-	PAGE_SUBS =
-		questions_answer: 'answerQuestionsReady'
-		question_page: 'singleQuestionsReady'
+	# PAGE_SUBS =
+	#	questions_answer: 'answerQuestionsReady'
+	#	questions_answered: 'answeredQuestionsReady'
+	#	questions_asked: 'askedQuestionsReady'
+	#	questions_page: 'singleQuestionReady'
+
 
 	Meteor.Router.add
 		"/": "questionsAnswer"
-		"/questions": "questionsListAnswered"
+		"/questions": "questionsIndex"
 		"/questions/new": "questionsNew"
 		"/questions/answer": "questionsAnswer"
-		"/profile": "questionsListMine"
+		# "/profile": "questionsListMine"
 
-	awaitSubscription: (page) ->
-		if Session.equals(PAGE_SUBS[page], true) then page else 'loading'
+
+	# Meteor.Router.filters
+	#	awaitSubscription: (page) ->
+	#		if Session.equals(PAGE_SUBS[page], true) then page else 'loading'
+
+
+	# Meteor.Router.filter 'awaitSubscription', {only: ['questions_answer', 'questions_answered', 'questions_asked', 'questions_page']}
 	
-	### START
 
+	Meteor.startup ->
+		Meteor.autorun ->
+			# grab the current page from the router, so this re-runs every time it changes
+			Meteor.Router.page()
+			console.log "-------- Request Start --------"
+			console.log ""
+)()
+
+
+### START
+(->
 	# XXX: could we just work this out programmatically based on the name?
 	#   -- fix this along with the general problem of subscription mess
 	PAGE_SUBS =
@@ -247,7 +265,6 @@
 				_.each eventBuffer, (e) ->
 					console.log "in buffer: ", e
 					trackEvent e.event, e.properties
-
-	END ###
-
 )()
+END ###
+

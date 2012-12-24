@@ -3,12 +3,15 @@
 #   owner: user id
 #   question: String
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
+# TODO: DEPRECATE: 
 #   answers: Array of objects like {user: userId, answer: "yes", createdAt: new Date} (or "no"/"don't care")
 #   answeredBy: Array of user ids like ["1", "2", "3"]
 #   answerCount: Integer count of answers
+# TODO: DEPRECATE: 
 #   votes: Array of objects like {user: userId, vote: "for", createdAt: new Date} (or "against")
 #   voteTally: Integer count of for votes minus against votes
-#	score: TODO Integer count of the aggregate score of a question
+# TODO: 
+#	score: Integer count of the aggregate score of a question
 #   createdAt: new Date
 Questions = new Meteor.Collection("questions")
 

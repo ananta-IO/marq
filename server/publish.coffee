@@ -27,19 +27,38 @@ Meteor.publish 'allUsers', ->
 
 # ** Questions **
 
-# Meteor.publish "questions", ->
-#	Questions.find()
+Meteor.publish "allQuestions", ->
+	Questions.find()
 
-Meteor.publish 'questions', (find, options, subName) ->
-	collection = Questions.find(find, options)
-	collectionArray = collection.fetch()
+# Meteor.publish 'questions', (find, options, subName) ->
+#	collection = Questions.find(find, options)
+#	collectionArray = collection.fetch()
 
-	# if this is a single question subscription but no question ID is passed, just return an empty collection
-	if subName is "singleQuestion" and _.isEmpty(find)
-		collection = null
-		collectionArray = []
+#	# if this is a single question subscription but no question ID is passed, just return an empty collection
+#	if subName is "singleQuestion" and _.isEmpty(find)
+#		collection = null
+#		collectionArray = []
 
-	collection
+#	collection
 
-Meteor.publish 'question', (id) ->
-	Questions.find(id)
+# Meteor.publish 'question', (id) ->
+#	Questions.find(id)
+
+
+
+# ** Answers **
+
+# Meteor.publish "allAnswers", ->
+#	Answers.find()
+
+
+# ** Votes **
+
+# Meteor.publish "allVotes", ->
+#	Votes.find()
+
+
+# ** Comments **
+
+# Meteor.publish "allComments", ->
+#	Comments.find()
