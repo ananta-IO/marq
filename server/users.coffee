@@ -1,6 +1,9 @@
 Accounts.onCreateUser (options, user) ->
 	user.profile = options.profile || {}
 	user.karma = 0
+	user.answeredQuestionIds = []
+	user.skippedQuestionIds = []
+
 	
 	# users start pending and need to be invited
 	user.isInvited = false

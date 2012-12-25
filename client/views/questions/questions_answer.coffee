@@ -37,8 +37,10 @@ Template.questionsAnswer.events
 
 
 Template.questionsAnswer.question = ->
-	# Questions.findOne( { $or : [ { answers: { $size: 0 } } , {"answers.user" : { $ne : @userId } }] }, { sort: { voteTally: -1, createdAt: -1 } } )
-	Questions.findOne( { $or : [ { answers: { $size: 0 } } , { answeredBy : { $ne : @userId } }] }, { sort: { voteTally: -1, createdAt: -1 } } )
+	# Questions.findOne( { $or : [ { answers: { $size: 0 } } , {"answers.user" : { $ne : @userId } } ] }, { sort: { voteTally: -1, createdAt: -1 } } )
+	# Questions.findOne( { $or : [ { answers: { $size: 0 } } , { answeredBy : { $ne : @userId } } ] }, { sort: { voteTally: -1, createdAt: -1 } } )
+	answeredQuestionIds = Meteor.user().answeredQuestionIds or []
+	Questions.findOne( { $or : [ { answerCount: 0 } , { _id: { $nin : answeredQuestionIds } } ] }, { sort: { voteTally: -1, createdAt: -1 } } )
 
 Template.questionsAnswer.alert = ->
 	Session.get "questionsAnswerAlert"
@@ -49,8 +51,7 @@ Template.questionsAnswer.previousQuestion = ->
 Template.questionsAnswer.rendered = ->
 	question = Questions.findOne(Session.get("previousQuestionId"))
 	if question
-		answersTally = tallyAnswers(question)
 		dataSet = []
-		_.map answersTally, (value, key) ->
+		_.map question.answersTally, (value, key) ->
 			dataSet.push {legendLabel: key, magnitude: value, link: "#"}
 		drawPie("questionsAnswerPie", dataSet, "#answer-question .chart", "colorScale20", 10, 100, 30, 0)

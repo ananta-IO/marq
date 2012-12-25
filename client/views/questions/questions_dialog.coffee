@@ -13,8 +13,7 @@ Template.questionsDialog.question = ->
 
 Template.questionsDialog.rendered = ->
 	question = Questions.findOne(Session.get("questionsDialogQuestionId"))
-	answersTally = tallyAnswers(question)
 	dataSet = []
-	_.map answersTally, (value, key) ->
+	_.map question.answersTally, (value, key) ->
 		dataSet.push {legendLabel: key, magnitude: value, link: "#"}
 	drawPie("questionsDialogPie", dataSet, ".question-dialog .chart", "colorScale20", 10, 100, 30, 0)

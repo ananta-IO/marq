@@ -3,14 +3,9 @@
 #   owner: user id
 #   question: String
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
-# TODO: DEPRECATE: 
-#   answers: Array of objects like {user: userId, answer: "yes", createdAt: new Date} (or "no"/"don't care")
-#   answeredBy: Array of user ids like ["1", "2", "3"]
+#   answersTally: Object with the breakdown for each answer choice like {ansChoice0: 3, ansChoice1: 89, ansChoice3: 0}
 #   answerCount: Integer count of answers
-# TODO: DEPRECATE: 
-#   votes: Array of objects like {user: userId, vote: "for", createdAt: new Date} (or "against")
 #   voteTally: Integer count of for votes minus against votes
-# TODO: 
 #	score: Integer count of the aggregate score of a question
 #   createdAt: new Date
 Questions = new Meteor.Collection("questions")
@@ -36,17 +31,6 @@ Questions.allow
 			!canRemoveQuestion(userId, question)
 		)
 
-countAnswers = (question) ->
-	question.answers.length || 0
-
-tallyAnswers = (question) ->
-	tally = {}
-	_.each question.answerChoices, (ac) ->
-		tally[ac] = 0
-	_.each question.answers, (ans) ->
-		if tally[ans.answer] then tally[ans.answer] += 1 else tally[ans.answer] = 1
-	tally
-
 objectifyAnswerChoices = (answerChoices) ->
 	_.map(answerChoices, (ac, i) -> {order: i+1, placeholder: ac, value: ac})
 
@@ -54,6 +38,7 @@ Meteor.methods
 	# options should include: question, answerChoices
 	createQuestion: (options) ->
 		options = options or {}
+		
 		throw new Meteor.Error(403, "Log in to ask a question")  unless @userId
 		throw new Meteor.Error(400, "Question can't be blank")  unless typeof options.question is "string" and options.question.length
 		throw new Meteor.Error(413, "Question is too long (140 characters max)")  if options.question and options.question.length > 140
@@ -62,45 +47,45 @@ Meteor.methods
 		throw new Meteor.Error(413, "At least one answer choice is too long (90 characters max)")  if options.answerChoices and _.contains(_.map(options.answerChoices, (ac) -> ac.length > 90 ), true)
 		throw new Meteor.Error(400, "You have already asked this question")  if Questions.findOne({ owner: @userId, question: options.question })
 		
+		answerChoices = if options.answerChoices and options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
+		answersTally = {}
+		_.each answerChoices, (ac) ->
+			answersTally[ac] = 0
+
 		Questions.insert
-			owner: @userId
+			ownerId: @userId
 			question: options.question
-			answerChoices: if options.answerChoices and options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
-			answers: []
-			answeredBy: []
+			answerChoices: answerChoices
+			answersTally: answersTally
 			answerCount: 0
-			votes: []
 			voteTally: 0
+			score: 0
 			createdAt: new Date
+
 
 	# options should include: questionId, answer
 	answerQuestion: (options) ->
 		options = options or {}
-		throw new Meteor.Error(403, "Log in to answer this question")  unless @userId
-		question = Questions.findOne(options.questionId)
-		throw new Meteor.Error(404, "No such question")  unless question
-		throw new Meteor.Error(400, "You have already answered this question")  if _.contains(_.pluck(question.answers, 'user'), @userId)
-		throw new Meteor.Error(400, "Answer can't be blank")  unless typeof options.answer is "string" and options.answer.length
-		throw new Meteor.Error(400, "Invalid answer")  unless _.contains(question.answerChoices, options.answer)
-		# add new answer entry
-		Questions.update options.questionId, { 
-			$push: { answeredBy: @userId, answers: { user: @userId, answer: options.answer, createdAt: new Date }},
+
+		# the validations are performed in createAnswer so this must happen first
+		Meteor.call "createAnswer", options
+
+		updateData =
 			$inc: { answerCount: 1 }
-		}
+		updateData.$inc["answersTally.#{options.answer}"] = 1
+		Questions.update options.questionId, updateData
+	
 
 
 	# options should include: questionId, vote
 	rateQuestion: (options) ->
 		options = options or {}
-		throw new Meteor.Error(403, "Log in to rate this question")  unless @userId
-		question = Questions.findOne(options.questionId)
-		throw new Meteor.Error(404, "No such question")  unless question
-		throw new Meteor.Error(400, "You have already rated this question")  if _.contains(_.pluck(question.votes, 'user'), @userId)
-		throw new Meteor.Error(400, "Vote can't be blank")  unless typeof options.vote is "string" and options.vote.length
-		throw new Meteor.Error(400, "Invalid rating")  unless _.contains(['for', 'against'], options.vote)
-		if options.vote == 'for' then incValue = 1 else incValue = -1
-		# add new vote entry
-		Questions.update options.questionId, { 
-			$push: { votes: { user: @userId, vote: options.vote, createdAt: new Date }},
-			$inc: { voteTally: incValue }
+		if options.vote == 'for' then options.incValue = 1 
+		if options.vote == 'against' then options.incValue = -1
+
+		# the validations are performed in createVote so this must happen first
+		Meteor.call "createVote", options
+
+		Questions.update options.questionId, {
+			$inc: { voteTally: options.incValue }
 		}

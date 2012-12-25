@@ -1,13 +1,11 @@
 ## Users
 # Each user is represented by a document in the Users collection:
-#	answers: array of answer ids that this user owns
-#	comments: array of comment ids that this user owns
-#	questions: array of question ids that this user owns
-#	answeredQuestions: array of question ids that this user has answered
-#	skippedQuestions: array of question ids that this user has skipped
+#	answeredQuestionIds: array of question ids that this user has answered
+#	skippedQuestionIds: array of question ids that this user has skipped
 #	profile: object
 #	 - facebook: object with all the user's facebook data
 #    - TODO: sync with more demographic info i.e. Twitter and Linkedin
+#   karma: Integer tally of cumulative site wide reputation. Question quality. Achievments unlocked. Etc.
 #   createdAt: new Date
 
 isAdminById = (userId) ->
