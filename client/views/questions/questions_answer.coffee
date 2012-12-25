@@ -37,8 +37,6 @@ Template.questionsAnswer.events
 
 
 Template.questionsAnswer.question = ->
-	# Questions.findOne( { $or : [ { answers: { $size: 0 } } , {"answers.user" : { $ne : @userId } } ] }, { sort: { voteTally: -1, createdAt: -1 } } )
-	# Questions.findOne( { $or : [ { answers: { $size: 0 } } , { answeredBy : { $ne : @userId } } ] }, { sort: { voteTally: -1, createdAt: -1 } } )
 	answeredQuestionIds = Meteor.user().answeredQuestionIds or []
 	Questions.findOne( { $or : [ { answerCount: 0 } , { _id: { $nin : answeredQuestionIds } } ] }, { sort: { voteTally: -1, createdAt: -1 } } )
 

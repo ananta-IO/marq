@@ -69,11 +69,13 @@ Meteor.subscribe('allQuestions')
 
 # ** Answers **
 
+Meteor.subscribe('myAnswers')
 # Meteor.subscribe('allAnswers')
 
 
 # ** Votes **
 
+Meteor.subscribe('myVotes')
 # Meteor.subscribe('allVotes')
 
 

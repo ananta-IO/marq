@@ -48,11 +48,17 @@ Meteor.publish "allQuestions", ->
 
 # ** Answers **
 
+Meteor.publish "myAnswers", ->
+	Answers.find({ ownerId: @userId })
+
 # Meteor.publish "allAnswers", ->
 #	Answers.find()
 
 
 # ** Votes **
+
+Meteor.publish "myVotes", ->
+	Votes.find({ ownerId: @userId })
 
 # Meteor.publish "allVotes", ->
 #	Votes.find()

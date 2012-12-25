@@ -4,11 +4,13 @@ Template.questionsListAnswered.events
 		openQuestionsDialog(event.currentTarget.getAttribute('data-questionId'))
 		
 Template.questionsListAnswered.questions = ->
-	Questions.find({ answeredBy: @userId }, { sort: { voteTally: -1, createdAt: -1 } })
+	answeredQuestionIds = Meteor.user().answeredQuestionIds or []
+	Questions.find({ _id: { $in: answeredQuestionIds } }, { sort: { voteTally: -1, createdAt: -1 } })
 
 Template.questionsListAnswered.answer = (question) ->
-	ans = _.find question.answers, (ans) -> ans.user == @userId
-	ans.answer
+	ans = Answers.findOne({ ownerId: Meteor.userId(), questionId: question._id })
+	ans.answer if ans
 
 Template.questionsListAnswered.questionCount = ->
-	Questions.find({ answeredBy: @userId }, { sort: { voteTally: -1, createdAt: -1 } }).count()
+	answeredQuestionIds = Meteor.user().answeredQuestionIds or []
+	Questions.find({ _id: { $in: answeredQuestionIds } }, { sort: { voteTally: -1, createdAt: -1 } }).count()

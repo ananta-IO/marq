@@ -1,2 +1,2 @@
 canRemoveQuestion = (userId, question) ->
-	question.owner == userId and question.answerCount == 0
+	question.ownerId == userId and question.answerCount == 0
