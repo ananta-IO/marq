@@ -6,7 +6,7 @@
 #   answersTally: Object with the breakdown for each answer choice like {ansChoice0: 3, ansChoice1: 89, ansChoice3: 0}
 #   answerCount: Integer count of answers
 #   voteTally: Integer count of for votes minus against votes
-#	score: Integer count of the aggregate score of a question
+#   score: Integer count of the aggregate score of a question
 #   createdAt: new Date
 Questions = new Meteor.Collection("questions")
 
@@ -33,6 +33,21 @@ Questions.allow
 
 objectifyAnswerChoices = (answerChoices) ->
 	_.map(answerChoices, (ac, i) -> {order: i+1, placeholder: ac, value: ac})
+
+unansweredQuestions = (limit = 3) ->
+	answeredQuestionIds = Meteor.user().answeredQuestionIds or []
+	skippedQuestionIds = Meteor.user().skippedQuestionIds or []
+	ids = _.union(answeredQuestionIds, skippedQuestionIds)
+	questions = Questions.find(
+		{ _id: { $nin : ids } }
+		{ sort: { voteTally: -1, createdAt: -1 } }
+	).fetch().slice(0, limit)
+	unless questions.length > 0
+		questions = Questions.find(
+			{ _id: { $nin : answeredQuestionIds } }
+			{ sort: { voteTally: -1, createdAt: -1 } }
+		).fetch().slice(0, limit)
+	questions 
 
 Meteor.methods
 	# options should include: question, answerChoices
@@ -61,6 +76,20 @@ Meteor.methods
 			voteTally: 0
 			score: 0
 			createdAt: new Date
+
+
+	# options should include: questionId
+	skipQuestion: (options) ->
+		options = options or {}
+
+		throw new Meteor.Error(403, "Log in to skip this question")  unless Meteor.userId()
+		question = Questions.findOne(options.questionId)
+		throw new Meteor.Error(404, "No such question")  unless question
+
+		unless options.questionId in Meteor.user().skippedQuestionIds
+			Meteor.users.update @userId, {
+				$push: { skippedQuestionIds: options.questionId }
+			}
 
 
 	# options should include: questionId, answer

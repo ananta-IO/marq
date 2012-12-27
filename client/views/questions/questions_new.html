@@ -65,7 +65,7 @@
 <template name="newQuestionAnswerChoice">
 	<div class="input-prepend input-append answer-choice-wrap">
 		<div class="add-on">{{order}}.</div>
-		<input type="text" class="answer-choice span4" placeholder="{{placeholder}}" maxlength="90" value="{{value}}" name="answer-choice-{{order}}">
+		<input type="text" class="answer-choice span4 press-enter" placeholder="{{placeholder}}" maxlength="90" value="{{value}}" name="answer-choice-{{order}}">
 		{{#if value}}
 			<button class="btn btn-danger remove" type="button" data-value="{{value}}"><i class="icon-trash icon-white"></i></button>
 		{{/if}}

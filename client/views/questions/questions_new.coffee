@@ -19,20 +19,17 @@ Template.questionsNew.events
 		event.preventDefault()
 		Session.set 'answerChoices', _.without(Session.get('answerChoices'), event.currentTarget.getAttribute('data-value'))
 
-	"keyup textarea.question": (event, template) ->
+	"keypress textarea.question": (event, template) ->
+		Session.set 'question', $.trim(event.currentTarget.value)
+		Session.set "questionRemainingChars", (140 - $(event.target).val().length)
 		if (event.which == 13)
 			$(event.target).focusNextInputField()
-		else
-			Session.set "questionRemainingChars", (140 - $(event.target).val().length)
+			event.preventDefault()
+			event.stopPropagation()
 
 	"keypress input.answer-choice": (event, template) ->
-		if (event.which == 13) then $(event.target).focusNextInputField()
-
-	"blur textarea.question": (event, template) ->
-		Session.set 'question', $.trim(event.currentTarget.value)
-
-	"blur input.answer-choice": (event, template) ->
 		Session.set 'answerChoices', _.without(_.uniq(_.map(template.findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
+		if (event.which == 13) then $(event.target).focusNextInputField()
 
 Template.questionsNew.alert = ->
 	Session.get "questionsNewAlert"

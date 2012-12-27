@@ -2,6 +2,13 @@
 	<div class="container" id="answer-question" data-question="{{question._id}}">
 
 		<div class="row-fluid">
+			<div class="span12">
+				<a href="#" class="next-question pull-right">next</a>
+				<a href="#" class="previous-question">previous</a>
+			</div>
+		</div>
+
+		<div class="row-fluid">
 			<div class="span12 well">
 
 				{{#if alert}}
@@ -19,46 +26,53 @@
 					</div>
 				{{/if}}
 
-				{{#if previousQuestion}}
-					<div class="row-fluid">
-						<div class="span12">
-							<h4>
-								{{previousQuestion.question}}
-							</h4>
-						</div>
-					</div>
-					<div class="row-fluid">
-						<div class="span12">
-							{{#with previousQuestion}}
-								{{> rateQuestion}}
-							{{/with}}
-						</div>
-					</div>
-					<div class="row-fluid">
-						<div class="span12">
-							<div class="chart"></div>
-						</div>
-					</div>
-				{{else}}
-
-					{{#if question}}
-						<h3>
-							{{question.question}}
-						<h3/>
-						<div class="answer-choices">
-							{{#each question.answerChoices}}
-								<p>
-									<button class="btn btn-info btn-block btn-large answer" type="button" data-answer="{{this}}">
+				{{#if question}}
+					<h3>
+						{{question.question}}
+					<h3/>
+					<div class="answer-choices">
+						{{#each question.answerChoices}}
+							<p>
+								{{#if isUsersAnswer this}}
+									<button class="btn btn-success btn-block btn-large answer selected" type="button" data-answer="{{this}}" disabled>
 										<!-- <span class="marq"><span class="inner"></span></span> -->
 										{{this}}
 									</button>
-								</p>
-							{{/each}}
+								{{else}}
+									{{#if answered}}
+										<button class="btn btn-block btn-large answer" type="button" data-answer="{{this}}" disabled>
+											<!-- <span class="marq"><span class="inner"></span></span> -->
+											{{this}}
+										</button>
+									{{else}}
+										<button class="btn btn-info btn-block btn-large answer" type="button" data-answer="{{this}}">
+											<!-- <span class="marq"><span class="inner"></span></span> -->
+											{{this}}
+										</button>
+									{{/if}}
+								{{/if}}
+							</p>
+						{{/each}}
+					</div>
+
+					{{#if answered}}
+						<hr/>
+						<div class="row-fluid">
+							<div class="span12">
+								{{#with question}}
+									{{> rateQuestion}}
+								{{/with}}
+							</div>
 						</div>
-					{{else}}
-						<p>You have answered every question. Why don't you ask a question.</p>
+						<div class="row-fluid">
+							<div class="span12">
+								<div class="chart"></div>
+							</div>
+						</div>
 					{{/if}}
 
+				{{else}}
+					<p><a href="#" class="previous-question">Answer</a> and <a href="/questions/new">ask</a> questions to view more.</p>
 				{{/if}}
 
 			</div>
