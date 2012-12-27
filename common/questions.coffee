@@ -60,7 +60,7 @@ Meteor.methods
 		throw new Meteor.Error(413, "Add at least one more answer choice")  if options.answerChoices and options.answerChoices.length > 0 and options.answerChoices.length < 2
 		throw new Meteor.Error(413, "Too many answer choice (5 max)")  if options.answerChoices and options.answerChoices.length > 5
 		throw new Meteor.Error(413, "At least one answer choice is too long (90 characters max)")  if options.answerChoices and _.contains(_.map(options.answerChoices, (ac) -> ac.length > 90 ), true)
-		throw new Meteor.Error(400, "You have already asked this question")  if Questions.findOne({ owner: @userId, question: options.question })
+		throw new Meteor.Error(400, "You have already asked this question")  if Questions.findOne({ ownerId: @userId, question: options.question })
 		
 		answerChoices = if options.answerChoices and options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
 		answersTally = {}

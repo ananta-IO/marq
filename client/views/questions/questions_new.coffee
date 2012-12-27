@@ -2,8 +2,11 @@ Template.questionsNew.events
 	"click button.save": (event, template) ->
 		event.preventDefault()
 		Session.set("questionsNewAlert", null)
-		question = $.trim(template.find("textarea.question").value)# Session.get 'question'
-		answerChoices = Session.get 'answerChoices'
+
+		question = $.trim(template.find("textarea.question").value)
+		Session.set 'question', question
+		answerChoices = _.without(_.uniq(_.map(template.findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
+		Session.set 'answerChoices', answerChoices
 		Meteor.call "createQuestion", {
 			question: question
 			answerChoices: answerChoices
@@ -11,26 +14,27 @@ Template.questionsNew.events
 			if error
 				Session.set("questionsNewAlert", {type: 'error', message: error.reason})
 			else
-				Session.set("questionsNewAlert", {type: 'success', message: 'Question successfully asked. We will automatically show your question to randomly selected people. You can improve your results by inviting your friends.', dismiss: true})
+				Session.set("questionsNewAlert", {type: 'success', message: 'Question successfully asked. We will automatically show your question to randomly selected people. You can improve your results by sharing this with your friends.', dismiss: true})
 				Session.set("question", '')
 				Session.set("answerChoices", null)
 	
 	"click .answer-choice-wrap .remove": (event, template) ->
 		event.preventDefault()
+		Session.set("questionsNewAlert", null)
 		Session.set 'answerChoices', _.without(Session.get('answerChoices'), event.currentTarget.getAttribute('data-value'))
 
 	"keypress textarea.question": (event, template) ->
+		Session.set("questionsNewAlert", null)
 		Session.set 'question', $.trim(event.currentTarget.value)
 		Session.set "questionRemainingChars", (140 - $(event.target).val().length)
 		if (event.which == 13)
 			$(event.target).focusNextInputField()
-			event.preventDefault()
-			event.stopPropagation()
 
 	"keypress input.answer-choice": (event, template) ->
+		Session.set("questionsNewAlert", null)
 		Session.set 'answerChoices', _.without(_.uniq(_.map(template.findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
 		if (event.which == 13) then $(event.target).focusNextInputField()
-
+		
 Template.questionsNew.alert = ->
 	Session.get "questionsNewAlert"
 
