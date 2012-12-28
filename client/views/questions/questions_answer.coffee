@@ -2,21 +2,18 @@
 
 Template.questionsAnswer.events
 	# skip/next question
-	"click a.next-question": (event, template) ->
+	"click .next-question": (event, template) ->
 		event.preventDefault()
 		AnswerableQuestions.goForward({skip: true})
 
 	# previous question
-	"click a.previous-question": (event, template) ->
+	"click .previous-question": (event, template) ->
 		event.preventDefault()
 		AnswerableQuestions.goBack()
 
 # Current/Primary Question
 Template.questionsAnswer.question = ->
 	AnswerableQuestions.currentQuestion()
-
-Template.questionsAnswer.alert = ->
-	Session.get "questionsAnswerAlert"
 
 # Previous Question
 Template.questionsAnswer.previousQuestion = ->
@@ -32,6 +29,9 @@ Template.questionsAnswer.rendered = ->
 		AnswerableQuestions.goForward({skip: true})
 	Mousetrap.bind 'left', () ->
 		AnswerableQuestions.goBack()
+
+	$('.flip').css 'height', $('.main-answer-view').outerHeight()
+	# $('.flip p').css 'margin-top', $('.main-answer-view').outerHeight()/2
 
 # Helper class to manage the flipbook of answerable questions indexed in the session and presented to the current user
 class AnswerableQuestions
@@ -84,26 +84,28 @@ Template.question.events
 	# answer
 	"click button.answer": (event, template) ->
 		event.preventDefault()
-		Session.set("questionsAnswerAlert", null)
-		questionId = $("#answer-question").attr('data-question')
+		Session.set("questionAlert", null)
+		# TODO: fetch id from template
+		questionId = AnswerableQuestions.currentId()
 		answer = event.currentTarget.getAttribute('data-answer')
-		#
+		
 		Meteor.call "answerQuestion", {
 			questionId: questionId
 			answer: answer
 		}, (error, question) ->
 			if error
-				Session.set("questionsAnswerAlert", {type: 'error', message: error.reason})
+				Session.set("questionAlert", {type: 'error', message: error.reason})
 			else
 				# Session.set("questionsAnswerAlert", {type: 'success', message: 'Thanks for your response. Please rate this question.', dismiss: true})
 
 	# vote
 	"click button.vote": (event, template) ->
 		event.preventDefault()
-		Session.set("questionsAnswerAlert", null)
-		questionId = $("#rate-question").attr('data-question')
+		Session.set("questionAlert", null)
+		# TODO: fetch id from template
+		questionId = AnswerableQuestions.currentId()
 		vote = event.currentTarget.getAttribute('data-vote')
-		#
+		
 		Meteor.call "rateQuestion", {
 			questionId: questionId
 			vote: vote
@@ -115,9 +117,24 @@ Template.question.events
 				# Session.set("questionsAnswerAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
 				AnswerableQuestions.goToNextUnanswered()
 
+Template.question.alert = ->
+	Session.get "questionAlert"
 
 Template.question.currentUserHasAnswered = (questionId) ->
 	currentUserHasAnswered(questionId)
+
+Template.question.voted = (questionId) ->
+	Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})?
+
+Template.question.vote = (questionId) ->
+	vote = Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})
+	if vote
+		if vote.vote == 1
+			'yes'
+		else
+			'no'
+	else
+		'you have not rated this yet'
 
 # TODO: make this take the quesitonId insead of assuming currentId()
 Template.question.isUsersAnswer = (answer) ->
@@ -126,9 +143,9 @@ Template.question.isUsersAnswer = (answer) ->
 
 # TODO: make this take the quesitonId insead of assuming currentId()
 Template.question.rendered = ->
-	if AnswerableQuestions.userHasAnsweredCurrent()
-		dataSet = []
-		_.map AnswerableQuestions.currentQuestion().answersTally, (value, key) ->
-			dataSet.push {legendLabel: key, magnitude: value, link: "#"}
-		drawPie("questionsAnswerPie", dataSet, "#answer-question .chart", "colorScale20", 10, 100, 30, 0)
+	# if AnswerableQuestions.userHasAnsweredCurrent()
+	dataSet = []
+	_.map AnswerableQuestions.currentQuestion().answersTally, (value, key) ->
+		dataSet.push {legendLabel: key, magnitude: value, link: "#"}
+	drawPie("questionsAnswerPie", dataSet, "#question-#{AnswerableQuestions.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
 

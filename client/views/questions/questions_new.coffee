@@ -23,14 +23,14 @@ Template.questionsNew.events
 		Session.set("questionsNewAlert", null)
 		Session.set 'answerChoices', _.without(Session.get('answerChoices'), event.currentTarget.getAttribute('data-value'))
 
-	"keypress textarea.question": (event, template) ->
+	"keyup textarea.question": (event, template) ->
 		Session.set("questionsNewAlert", null)
 		Session.set 'question', $.trim(event.currentTarget.value)
 		Session.set "questionRemainingChars", (140 - $(event.target).val().length)
 		if (event.which == 13)
 			$(event.target).focusNextInputField()
 
-	"keypress input.answer-choice": (event, template) ->
+	"keyup input.answer-choice": (event, template) ->
 		Session.set("questionsNewAlert", null)
 		Session.set 'answerChoices', _.without(_.uniq(_.map(template.findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
 		if (event.which == 13) then $(event.target).focusNextInputField()

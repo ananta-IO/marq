@@ -78,14 +78,28 @@ input.press-enter
 			.inner
 				display: block
 
-#answer-question
+#questions-answer
 	margin-top: 20px
+	.flip
+		position: relative
+		opacity: 0.4
+		height: 108px
+		&:hover
+			opacity: 1
+			cursor: pointer
+		p
+			position: absolute
+			top: 50%
+			left: 0
+			right: 0
+
+.question
 	.answer-choices
 		.answer
 			text-align: left
 			padding-left: 15px
 
-#question-new
+#questions-new
 	div.textarea
 		position: relative
 		margin-bottom: 10px
