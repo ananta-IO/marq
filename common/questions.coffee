@@ -1,11 +1,13 @@
 ## Questions
 # Each question is represented by a document in the Questions collection:
-#   owner: user id
+#   ownerId: String user id
 #   question: String
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
 #   answersTally: Object with the breakdown for each answer choice like {ansChoice0: 3, ansChoice1: 89, ansChoice3: 0}
 #   answerCount: Integer count of answers
 #   voteTally: Integer count of for votes minus against votes
+#   voteCount: Integer count of votes
+#   commentCount: Integer count of comments
 #   score: Integer count of the aggregate score of a question
 #   createdAt: new Date
 Questions = new Meteor.Collection("questions")
@@ -74,6 +76,8 @@ Meteor.methods
 			answersTally: answersTally
 			answerCount: 0
 			voteTally: 0
+			voteCount: 0
+			commentCount: 0
 			score: 0
 			createdAt: new Date
 
@@ -116,5 +120,16 @@ Meteor.methods
 		Meteor.call "createVote", options
 
 		Questions.update options.questionId, {
-			$inc: { voteTally: options.incValue }
+			$inc: { voteTally: options.incValue, voteCount: 1 }
+		}
+
+	# options should include: questionId, comment
+	commentOnQuestion: (options) ->
+		options = options or {}
+
+		# the validations are performed in createVote so this must happen first
+		Meteor.call "createComment", options
+
+		Questions.update options.questionId, {
+			$inc: { commentCount: 1 }
 		}

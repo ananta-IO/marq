@@ -4,11 +4,13 @@ Template.questionsAnswer.events
 	# skip/next question
 	"click .next-question": (event, template) ->
 		event.preventDefault()
+		Session.set("questionAlert", null)
 		AnswerableQuestions.goForward({skip: true})
 
 	# previous question
 	"click .previous-question": (event, template) ->
 		event.preventDefault()
+		Session.set("questionAlert", null)
 		AnswerableQuestions.goBack()
 
 # Current/Primary Question
@@ -32,6 +34,10 @@ Template.questionsAnswer.rendered = ->
 
 	$('.flip').css 'height', $('.main-answer-view').outerHeight()
 	# $('.flip p').css 'margin-top', $('.main-answer-view').outerHeight()/2
+
+Meteor.startup ->
+	Meteor.autorun ->
+		AnswerableQuestions.initialize()
 
 # Helper class to manage the flipbook of answerable questions indexed in the session and presented to the current user
 class AnswerableQuestions
@@ -68,14 +74,15 @@ class AnswerableQuestions
 		if options.skip == true then Meteor.call "skipQuestion", { questionId: @currentId() }
 		if @nextId(2)? then @questionIds(_.union(@questionIds(), _.pluck(unansweredQuestions(3), '_id')))
 		if @nextId(1)? then @questionIndex(@questionIndex() + 1)
-		@currentId()  
-	@goToNextUnanswered: ->
-		@goForward() while @userHasAnsweredCurrent() and @nextId(1)?        
+		@currentId()
 
 	@goBack: ->
 		index = @questionIndex() - 1
 		if index >= 0 then @questionIndex(index)
 		@currentId()
+
+	@goToNextUnanswered: ->
+		@goForward() while @userHasAnsweredCurrent() and @nextId(1)?        
 
 
 # ** question **
@@ -96,7 +103,7 @@ Template.question.events
 			if error
 				Session.set("questionAlert", {type: 'error', message: error.reason})
 			else
-				# Session.set("questionsAnswerAlert", {type: 'success', message: 'Thanks for your response. Please rate this question.', dismiss: true})
+				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your response. Please rate this question.', dismiss: true})
 
 	# vote
 	"click button.vote": (event, template) ->
@@ -111,11 +118,29 @@ Template.question.events
 			vote: vote
 		}, (error, question) ->
 			if error
-				# Session.set("questionsAnswerAlert", {type: 'error', message: error.reason})
+				# Session.set("questionAlert", {type: 'error', message: error.reason})
 				AnswerableQuestions.goToNextUnanswered()
 			else
-				# Session.set("questionsAnswerAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
+				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
 				AnswerableQuestions.goToNextUnanswered()
+
+	# comment
+	"keyup input.new-comment": (event, template) ->
+		if (event.which == 13)
+			event.preventDefault()
+			Session.set("questionAlert", null)
+			# TODO: fetch id from template, put it in a hidden form field
+			questionId = AnswerableQuestions.currentId()
+			comment = template.find("input.new-comment").value
+			Meteor.call "commentOnQuestion", {
+				questionId: questionId
+				comment: comment
+			}, (error, question) ->
+				if error
+					Session.set("questionAlert", {type: 'error', message: error.reason})
+				else
+					Session.set("questionAlert", null)
+					template.find("input.new-comment").value = null
 
 Template.question.alert = ->
 	Session.get "questionAlert"
@@ -142,8 +167,21 @@ Template.question.isUsersAnswer = (answer) ->
 	ans? and ans.answer == answer
 
 # TODO: make this take the quesitonId insead of assuming currentId()
+Template.question.anyComments = ->
+	Comments.find(
+		{ questionId: AnswerableQuestions.currentId() }
+		{ sort: { createdAt: 1 } }
+	).count() > 0
+
+# TODO: make this take the quesitonId insead of assuming currentId()
+Template.question.comments = ->
+	Comments.find(
+		{ questionId: AnswerableQuestions.currentId() }
+		{ sort: { createdAt: 1 } }
+	)
+
+# TODO: make this take the quesitonId insead of assuming currentQuestion()
 Template.question.rendered = ->
-	# if AnswerableQuestions.userHasAnsweredCurrent()
 	dataSet = []
 	_.map AnswerableQuestions.currentQuestion().answersTally, (value, key) ->
 		dataSet.push {legendLabel: key, magnitude: value, link: "#"}

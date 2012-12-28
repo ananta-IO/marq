@@ -1,7 +1,7 @@
 ## Votes
 # Each vote is represented by a document in the Votes collection:
-#	ownerId: Integer user id
-#	questionId: Integer question id
+#	ownerId: String user id
+#	questionId: String question id
 #	vote: Integer (1 or -1)
 #   createdAt: new Date
 Votes = new Meteor.Collection("votes")

@@ -81,4 +81,4 @@ Meteor.subscribe('myVotes')
 
 # ** Comments **
 
-# Meteor.subscribe('allComments')
+Meteor.subscribe('allComments')

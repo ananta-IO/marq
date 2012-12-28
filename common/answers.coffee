@@ -1,7 +1,7 @@
 ## Answers
 # Each answer is represented by a document in the Answers collection:
-#	ownerId: Integer user id
-#	questionId: Integer question id
+#	ownerId: String user id
+#	questionId: String question id
 #	answer: String
 #   createdAt: Date
 Answers = new Meteor.Collection("answers")

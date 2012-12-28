@@ -28,6 +28,9 @@ svg
 	cursor: -moz-zoom-out
 	cursor: -webkit-zoom-out
 
+.no-wrap
+	white-space: nowrap
+
 input.press-enter
 	background: url("/assets/return-symbol.jpg") 98% center no-repeat
 	background-color: white
@@ -98,6 +101,16 @@ input.press-enter
 		.answer
 			text-align: left
 			padding-left: 15px
+
+	.comments
+		.past-comments
+			// min-height: 300px
+			max-height: 300px
+			overflow: auto
+			background-color: #fefefe
+			.inner
+				.prompt
+					margin: 0
 
 #questions-new
 	div.textarea

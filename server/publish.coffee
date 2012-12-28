@@ -66,5 +66,5 @@ Meteor.publish "myVotes", ->
 
 # ** Comments **
 
-# Meteor.publish "allComments", ->
-#	Comments.find()
+Meteor.publish "allComments", ->
+	Comments.find()

@@ -29,9 +29,6 @@
 			Meteor.Router.page()
 			console.log "-------- Request Start --------"
 			console.log ""
-
-			# TODO: why does this have to be initialized here?
-			AnswerableQuestions.initialize()
 )()
 
 
