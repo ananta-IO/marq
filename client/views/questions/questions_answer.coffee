@@ -180,6 +180,9 @@ Template.question.comments = ->
 		{ sort: { createdAt: 1 } }
 	)
 
+Template.question.isCurrentUsersComment = (ownerId) ->
+	ownerId == Meteor.userId()
+
 # TODO: make this take the quesitonId insead of assuming currentQuestion()
 Template.question.rendered = ->
 	if currentUserHasAnswered(AnswerableQuestions.currentId())
