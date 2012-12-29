@@ -191,3 +191,6 @@ Template.question.rendered = ->
 			dataSet.push {legendLabel: key, magnitude: value, link: "#"}
 		drawPie("questionsAnswerPie", dataSet, "#question-#{AnswerableQuestions.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
 
+		div = this.find(".past-comments")
+		div.scrollTop = div.scrollHeight
+
