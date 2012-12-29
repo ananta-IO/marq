@@ -19,8 +19,8 @@
 				</div>
 			{{else}}
 				<div class="span2 well hidden-phone">
-					<p>Beautiful realtime surveys. Easily ask questions, get instant feedback, chat with respondents.</p>
-					<p>Answer questions to view more or <a href="/questions/new">ask your own questions</a>.</p>
+					<p>Beautiful real-time bite-sized surveys. Easily ask questions, get instant feedback, and discuss responses.</p>
+					<p>Answer questions to view more or <a href="/questions/new">ask your own</a>.</p>
 				</div>
 			{{/if}}
 
@@ -40,7 +40,7 @@
 				</div>
 			{{else}}
 				<div class="span2 well hidden-phone">
-					<p><a href="#" class="previous-question">Answer</a> and <a href="/questions/new">ask</a> questions to view more.</p>
+					<p><a href="/questions/new">Ask</a> and <a href="#" class="previous-question">answer</a> questions to access more.</p>
 				</div>
 			{{/if}}
 
@@ -98,8 +98,10 @@
 						<div class="question-rate">
 							<p class="lead">
 								Was this a good question?
+							</p>
+							<p class="lead">
 								{{#if voted _id}}
-									&middot; you said <strong>{{vote _id}}</strong>
+									you said <strong>{{vote _id}}</strong>
 									&middot; cumulative rating <strong>{{voteTally}}</strong>
 									<!-- <i class="icon-certificate"></i> -->
 								{{else}}

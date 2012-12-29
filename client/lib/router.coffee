@@ -9,9 +9,12 @@
 
 	Meteor.Router.add
 		"/": "questionsAnswer"
+		"/about": "about"
+		"/answer": "questionsAnswer"
+		"/ask": "questionsNew"
 		"/questions": "questionsIndex"
-		"/questions/new": "questionsNew"
 		"/questions/answer": "questionsAnswer"
+		"/questions/new": "questionsNew"
 		# "/profile": "questionsListMine"
 
 

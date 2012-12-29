@@ -82,7 +82,7 @@ class AnswerableQuestions
 		@currentId()
 
 	@goToNextUnanswered: ->
-		@goForward() while @userHasAnsweredCurrent() and @nextId(1)?        
+		@goForward() while currentUserHasAnswered(@currentId()) and @nextId(1)?        
 
 
 # ** question **
@@ -182,8 +182,9 @@ Template.question.comments = ->
 
 # TODO: make this take the quesitonId insead of assuming currentQuestion()
 Template.question.rendered = ->
-	dataSet = []
-	_.map AnswerableQuestions.currentQuestion().answersTally, (value, key) ->
-		dataSet.push {legendLabel: key, magnitude: value, link: "#"}
-	drawPie("questionsAnswerPie", dataSet, "#question-#{AnswerableQuestions.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
+	if currentUserHasAnswered(AnswerableQuestions.currentId())
+		dataSet = []
+		_.map AnswerableQuestions.currentQuestion().answersTally, (value, key) ->
+			dataSet.push {legendLabel: key, magnitude: value, link: "#"}
+		drawPie("questionsAnswerPie", dataSet, "#question-#{AnswerableQuestions.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
 
