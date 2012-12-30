@@ -80,8 +80,9 @@ class QuestionList
 			ids = answeredQuestionIds() or []
 			index = ids.length
 			@questionIds(ids)
-			if index > 0 then @questionIndex(index - 1) else @questionIndex(0)
 			@findAndAppendMoreQuestions()
+			if index > 0 then @questionIndex(index - 1) else @questionIndex(0)
+			if @nextId()? then @questionIndex(index)
 
 	@findAndAppendMoreQuestions: ->
 		@questionIds(_.union(@questionIds(), unansweredQuestionIds(3)))
