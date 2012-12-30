@@ -20,6 +20,8 @@ Template.questionsNew.events
 				Session.set("question", '')
 				Session.set("answerChoices", null)
 				Session.set "new question image uri", null
+				Session.set "questionRemainingChars", (140 - $(event.target).val().length)
+				Session.set "resetFpWidget", (Math.random()*999999)
 	
 	'change #new-question-image': (event) ->
         Session.set "new question image uri", event.fpfile.url
@@ -37,8 +39,6 @@ Template.questionsNew.events
 		Session.set("questionsNewAlert", null)
 		Session.set 'question', $.trim(event.currentTarget.value)
 		Session.set "questionRemainingChars", (140 - $(event.target).val().length)
-		if (event.which == 13)
-			$(event.target).focusNextInputField()
 
 	"keyup input.answer-choice": (event, template) ->
 		Session.set("questionsNewAlert", null)
@@ -54,6 +54,9 @@ Template.questionsNew.question = ->
 Template.questionsNew.questionRemainingChars = ->
 	Session.get "questionRemainingChars"
 
+Template.questionsNew.resetFpWidget = ->
+	Session.get "resetFpWidget"
+
 Template.questionsNew.imageUri = ->
 	Session.get "new question image uri"
 
@@ -68,8 +71,12 @@ Template.questionsNew.objectifiedAnswerChoices = ->
 		objectifiedAnswerChoices = [{order: 1, placeholder: 'yes', value: ''}, {order: 2, placeholder: 'no', value: ''}, {order: 3, placeholder: "don't care", value: ''}]
 	objectifiedAnswerChoices
 
+Template.questionsNew.created = ->
+	questionLength = if Session.get("question") then Session.get("question").length else 0
+	Session.set "questionRemainingChars", (140 - questionLength)
+
 Template.questionsNew.rendered = ->
-	wait 1000, () =>
+	wait 2000, () =>
 		unless @find(".pick-image-widget")
 			filepicker.constructWidget(@find("#new-question-image"))
 

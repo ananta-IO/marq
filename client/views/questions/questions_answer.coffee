@@ -48,6 +48,9 @@ class AnswerableQuestions
 			@questionIds(_.pluck(unansweredQuestions(3), '_id'))
 			@questionIndex(0)
 
+	@findAndAppendMoreQuestions: ->
+		@questionIds(_.union(@questionIds(), _.pluck(unansweredQuestions(3), '_id')))
+
 	@questionIds: (ids = false) ->
 		unless ids == false then Session.set("answerableQuestionIds", ids)
 		Session.get("answerableQuestionIds") or []
@@ -74,13 +77,13 @@ class AnswerableQuestions
 	@goForward: (options) ->
 		options or= {}
 		if options.skip == true then Meteor.call "skipQuestion", { questionId: @currentId() }
-		if @nextId(2)? then @questionIds(_.union(@questionIds(), _.pluck(unansweredQuestions(3), '_id')))
+		if !@nextId(2)? then @findAndAppendMoreQuestions()
 		if @nextId(1)? then @questionIndex(@questionIndex() + 1)
 		@currentId()
 
 	@goBack: ->
-		index = @questionIndex() - 1
-		if index >= 0 then @questionIndex(index)
+		index = @questionIndex()
+		if index > 0 then @questionIndex(index - 1)
 		@currentId()
 
 	@goToNextUnanswered: ->

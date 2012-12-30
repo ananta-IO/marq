@@ -8,74 +8,84 @@
 			</div>
 			<div class="span8 well">
 
-				<div class="row-fluid">
-					<div class="span12">
-						<label for="new-question-question">Ask a Question</label>
-						<div class="input textarea">
-							<textarea rows="2" type="text" class="question span12" id="new-question-question" placeholder="What do you want to know?" maxlength="140" name="question">{{question}}</textarea>
-							<span class="char-count">{{questionRemainingChars}}</span>
+				{{#isolate}}
+					<div class="row-fluid">
+						<div class="span12">
+							<label for="new-question-question">Ask a Question</label>
+							<div class="input textarea">
+								<textarea rows="2" type="text" class="question span12" id="new-question-question" placeholder="What do you want to know?" maxlength="140" name="question">{{question}}</textarea>
+								<span class="char-count">{{questionRemainingChars}}</span>
+							</div>
 						</div>
 					</div>
-				</div>
+				{{/isolate}}
 
 				<br/>
 				<div class="row-fluid">
 					<div class="span12">
+						{{#if resetFpWidget}}
+						{{/if}}
 						<label for="new-question-image">Add an Image (optional)</label>
 						<div class="input file image">
 							<input id="new-question-image" name="new-question-image" type="filepicker-dragdrop" data-fp-multiple="false" data-fp-class="pick-image-widget" data-fp-button-class="btn" data-fp-button-text="Pick Image" data-fp-drag-text="Or drop image here" data-fp-mimetype="image/*" data-fp-store-location="S3" data-fp-container="modal" data-fp-maxsize="5242880" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA,FTP,WEBDAV" />
 							<span class="help-block">
 								<small>
-									If you choose to add an image make sure that it relates directly to your question. 
+									It should relate directly to your question. 
 								</small>
 							</span>
 						</div>
 					</div>
 				</div>
 
-				{{#if imageUri}}
-					<br/>
-					<div class="row-fluid">
-						<div class="span12" id="preview-image">
-							<img src="{{imageUri}}" style="max-width: 500px; max-height: 500px;"></img>
-							<button class="btn btn-danger remove" type="button"><i class="icon-trash icon-white"></i></button>
+				{{#isolate}}
+					{{#if imageUri}}
+						<br/>
+						<div class="row-fluid">
+							<div class="span12" id="preview-image">
+								<img src="{{imageUri}}" style="max-width: 500px; max-height: 500px;"></img>
+								<button class="btn btn-danger remove" type="button"><i class="icon-trash icon-white"></i></button>
+							</div>
 						</div>
-					</div>
-				{{/if}}
+					{{/if}}
+				{{/isolate}}
 
 				<br/>
-				<div class="row-fluid">
-					<div class="span12">
-						<div class="answer-choices">
-							<label for="new-question-answer-choice-1">Add Response Choices (optional)</label> 
-							{{#each objectifiedAnswerChoices}}
-								{{> newQuestionAnswerChoice}}
-							{{/each}}
-							<span class="help-block">
-								<small>
-									For simplicity all questions are multiple choice. The default choices are Yes, No, and Don't Care. You can overwrite them.
-								</small>
-							</span>  
+				{{#isolate}}
+					<div class="row-fluid">
+						<div class="span12">
+							<div class="answer-choices">
+								<label for="new-question-answer-choice-1">Add Response Choices (optional)</label> 
+								{{#each objectifiedAnswerChoices}}
+									{{> newQuestionAnswerChoice}}
+								{{/each}}
+								<span class="help-block">
+									<small>
+										For simplicity all questions are multiple choice. The default choices are Yes, No, and Don't Care. You can overwrite them.
+									</small>
+								</span>  
+							</div>
 						</div>
 					</div>
-				</div>
+				{{/isolate}}
 
 				<hr/>
 
-				{{#if alert}}
-					<div class="row-fluid">
-						<div class="span12">
-							{{#with alert}}
-								<div class="alert alert-{{type}}">
-									{{#if dismiss}}
-										<button type="button" class="close" data-dismiss="alert">×</button>
-									{{/if}}
-									{{message}}
-								</div>
-							{{/with}}
+				{{#isolate}}
+					{{#if alert}}
+						<div class="row-fluid">
+							<div class="span12">
+								{{#with alert}}
+									<div class="alert alert-{{type}}">
+										{{#if dismiss}}
+											<button type="button" class="close" data-dismiss="alert">×</button>
+										{{/if}}
+										{{message}}
+									</div>
+								{{/with}}
+							</div>
 						</div>
-					</div>
-				{{/if}}
+					{{/if}}
+				{{/isolate}}
 
 				<div class="row-fluid">
 					<div class="span12">
