@@ -55,7 +55,8 @@ Template.questionsAnswer.rendered = ->
 		QuestionList.goToPreviousUnanswered()
 
 	$('.flip').css 'height', $('.main-answer-view').outerHeight()
-	# $('.flip p').css 'margin-top', $('.main-answer-view').outerHeight()/2
+	wait 2000, =>
+		$('.flip').css 'height', $('.main-answer-view').outerHeight()
 
 	QuestionList.addQuestionsIfLow()
 
@@ -124,9 +125,11 @@ class QuestionList
 		@currentId()
 
 	@goToNextUnanswered: ->
+		@goForward({skip: true}) if @nextId(1)? 
 		@goForward({skip: true}) while currentUserHasAnswered(@currentId()) and @nextId(1)? 
 
 	@goToPreviousUnanswered: ->
+		@goBack() if @previousId(1)?
 		@goBack() while currentUserHasAnswered(@currentId()) and @previousId(1)?        
 
 

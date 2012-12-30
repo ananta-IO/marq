@@ -34,7 +34,11 @@
 						{{/if}}
 						<label for="new-question-image">Add an Image (optional)</label>
 						<div class="input file image">
-							<input id="new-question-image" name="new-question-image" type="filepicker-dragdrop" data-fp-multiple="false" data-fp-class="pick-image-widget" data-fp-button-class="btn" data-fp-button-text="Pick Image" data-fp-drag-text="Or drop image here" data-fp-mimetype="image/*" data-fp-store-location="S3" data-fp-container="modal" data-fp-maxsize="5242880" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA,FTP,WEBDAV" />
+							{{#if isLoggedIn}}
+								<input id="new-question-image" name="new-question-image" type="filepicker-dragdrop" data-fp-multiple="false" data-fp-class="pick-image-widget" data-fp-button-class="btn" data-fp-button-text="Pick an Image" data-fp-drag-text="Or drop an image here" data-fp-mimetype="image/*" data-fp-store-location="S3" data-fp-container="modal" data-fp-maxsize="5242880" data-fp-services="BOX,COMPUTER,DROPBOX,FACEBOOK,GITHUB,GOOGLE_DRIVE,FLICKR,EVERNOTE,GMAIL,INSTAGRAM,IMAGE_SEARCH,URL,WEBCAM,PICASA,FTP,WEBDAV" />
+							{{else}}
+								<input type="file"/>
+							{{/if}}
 							<span class="help-block">
 								<small>
 									It should relate directly to your question. 
@@ -49,8 +53,8 @@
 						<br/>
 						<div class="row-fluid">
 							<div class="span12" id="preview-image">
-								<img src="{{imageUri}}" style="max-width: 500px; max-height: 500px;"></img>
-								<button class="btn btn-danger remove" type="button"><i class="icon-trash icon-white"></i></button>
+								<button class="btn btn-inverse remove" type="button" style="margin-bottom: 8px;">Remove Image <i class="icon-trash icon-white"></i></button>
+								<img src="{{imageUri}}"></img>
 							</div>
 						</div>
 					{{/if}}

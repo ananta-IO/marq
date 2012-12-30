@@ -67,6 +67,19 @@
 	<div id="question-{{_id}}" class="question">
 		{{#if this}}
 
+			<blockquote>
+				<p class="lead">
+					{{question}}
+				<p/>
+				{{#if imageUri}}
+					<div class="row-fluid">
+						<div class="span12" id="preview-image">
+							<img src="{{imageUri}}" class="span12"></img>
+						</div>
+					</div>
+				{{/if}}
+			</blockquote>
+
 			{{#if alert}}
 				<div class="row-fluid">
 					<div class="span12">
@@ -81,19 +94,6 @@
 					</div>
 				</div>
 			{{/if}}
-
-			<blockquote>
-				<p class="lead">
-					{{question}}
-				<p/>
-				{{#if imageUri}}
-					<div class="row-fluid">
-						<div class="span12" id="preview-image">
-							<img src="{{imageUri}}" class="span12"></img>
-						</div>
-					</div>
-				{{/if}}
-			</blockquote>
 
 			{{#if currentUserHasAnswered _id}}
 				<div class="answer-choices">

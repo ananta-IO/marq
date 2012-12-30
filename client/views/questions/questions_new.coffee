@@ -51,6 +51,9 @@ Template.questionsNew.alert = ->
 Template.questionsNew.question = ->
 	Session.get "question"
 
+Template.questionsNew.isLoggedIn = ->
+	Meteor.userId()
+
 Template.questionsNew.questionRemainingChars = ->
 	Session.get "questionRemainingChars"
 
