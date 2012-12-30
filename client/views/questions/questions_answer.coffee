@@ -5,59 +5,95 @@ Template.questionsAnswer.events
 	"click .next-question": (event, template) ->
 		event.preventDefault()
 		Session.set("questionAlert", null)
-		AnswerableQuestions.goForward({skip: true})
+		QuestionList.goForward({skip: true})
+
+	# skip/next unanswered question
+	"click .next-unanswered-question": (event, template) ->
+		event.preventDefault()
+		Session.set("questionAlert", null)
+		QuestionList.goToNextUnanswered()
 
 	# previous question
 	"click .previous-question": (event, template) ->
 		event.preventDefault()
 		Session.set("questionAlert", null)
-		AnswerableQuestions.goBack()
+		QuestionList.goBack()
+
+	# previous unanswered question
+	"click .previous-unanswered-question": (event, template) ->
+		event.preventDefault()
+		Session.set("questionAlert", null)
+		QuestionList.goToPreviousUnanswered()
 
 # Current/Primary Question
 Template.questionsAnswer.question = ->
-	AnswerableQuestions.currentQuestion()
+	QuestionList.currentQuestion()
 
 # Previous Question
 Template.questionsAnswer.previousQuestion = ->
-	AnswerableQuestions.previousQuestion()
+	QuestionList.previousQuestion()
 
 # Next Question
 Template.questionsAnswer.nextQuestion = ->
-	AnswerableQuestions.nextQuestion()
+	QuestionList.nextQuestion()
 
 # Render
 Template.questionsAnswer.rendered = ->
+	QuestionList.namespace = "questionsAnswer"
+
 	Mousetrap.bind 'right', () ->
 		Session.set("questionAlert", null)
-		AnswerableQuestions.goForward({skip: true})
+		QuestionList.goForward({skip: true})
 	Mousetrap.bind 'left', () ->
 		Session.set("questionAlert", null)
-		AnswerableQuestions.goBack()
+		QuestionList.goBack()
+	Mousetrap.bind 'shift+right', () ->
+		Session.set("questionAlert", null)
+		QuestionList.goToNextUnanswered()
+	Mousetrap.bind 'shift+left', () ->
+		Session.set("questionAlert", null)
+		QuestionList.goToPreviousUnanswered()
 
 	$('.flip').css 'height', $('.main-answer-view').outerHeight()
 	# $('.flip p').css 'margin-top', $('.main-answer-view').outerHeight()/2
 
-Meteor.startup ->
-	Meteor.autorun ->
-		AnswerableQuestions.initialize()
+	QuestionList.addQuestionsIfLow()
+
+# Created
+Template.questionsAnswer.created = ->
+	Meteor.startup ->
+		Meteor.autorun ->
+			QuestionList.namespace = "questionsAnswer"
+			QuestionList.initialize()
 
 # Helper class to manage the flipbook of answerable questions indexed in the session and presented to the current user
-class AnswerableQuestions
-	@initialize: ->
-		if _.isEmpty(@questionIds())
-			@questionIds(_.pluck(unansweredQuestions(3), '_id'))
+class QuestionList
+
+	@namespace: 'default'
+
+	@initialize: (questionId = null) ->
+		if questionId
+			@questionIds([questionId])
 			@questionIndex(0)
+		else if _.isEmpty(@questionIds())
+			ids = answeredQuestionIds()
+			@questionIds(ids)
+			@questionIndex(ids.length - 1)
+			@findAndAppendMoreQuestions()
 
 	@findAndAppendMoreQuestions: ->
-		@questionIds(_.union(@questionIds(), _.pluck(unansweredQuestions(3), '_id')))
+		@questionIds(_.union(@questionIds(), unansweredQuestionIds(3)))
+
+	@addQuestionsIfLow: ->
+		if !@nextId(2)? then @findAndAppendMoreQuestions()
 
 	@questionIds: (ids = false) ->
-		unless ids == false then Session.set("answerableQuestionIds", ids)
-		Session.get("answerableQuestionIds") or []
+		unless ids == false then Session.set("#{@namespace}-questionIds", ids)
+		Session.get("#{@namespace}-questionIds") or []
 
 	@questionIndex: (index = false) ->
-		unless index == false then Session.set("answerableQuestionIndex", index)
-		Session.get("answerableQuestionIndex") or 0
+		unless index == false then Session.set("#{@namespace}-questionIndex", index)
+		Session.get("#{@namespace}-questionIndex") or 0
 
 	@currentId: ->
 		@questionIds()[@questionIndex()]
@@ -77,7 +113,7 @@ class AnswerableQuestions
 	@goForward: (options) ->
 		options or= {}
 		if options.skip == true then Meteor.call "skipQuestion", { questionId: @currentId() }
-		if !@nextId(2)? then @findAndAppendMoreQuestions()
+		@addQuestionsIfLow()
 		if @nextId(1)? then @questionIndex(@questionIndex() + 1)
 		@currentId()
 
@@ -87,7 +123,10 @@ class AnswerableQuestions
 		@currentId()
 
 	@goToNextUnanswered: ->
-		@goForward() while currentUserHasAnswered(@currentId()) and @nextId(1)?        
+		@goForward({skip: true}) while currentUserHasAnswered(@currentId()) and @nextId(1)? 
+
+	@goToPreviousUnanswered: ->
+		@goBack() while currentUserHasAnswered(@currentId()) and @previousId(1)?        
 
 
 # ** question **
@@ -98,7 +137,7 @@ Template.question.events
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		# TODO: fetch id from template
-		questionId = AnswerableQuestions.currentId()
+		questionId = QuestionList.currentId()
 		answer = event.currentTarget.getAttribute('data-answer')
 		
 		Meteor.call "answerQuestion", {
@@ -115,7 +154,7 @@ Template.question.events
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		# TODO: fetch id from template
-		questionId = AnswerableQuestions.currentId()
+		questionId = QuestionList.currentId()
 		vote = event.currentTarget.getAttribute('data-vote')
 		
 		Meteor.call "rateQuestion", {
@@ -124,10 +163,10 @@ Template.question.events
 		}, (error, question) ->
 			if error
 				# Session.set("questionAlert", {type: 'error', message: error.reason})
-				AnswerableQuestions.goToNextUnanswered()
+				QuestionList.goToNextUnanswered()
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
-				AnswerableQuestions.goToNextUnanswered()
+				QuestionList.goToNextUnanswered()
 
 	# comment
 	"keyup input.new-comment": (event, template) ->
@@ -135,7 +174,7 @@ Template.question.events
 			event.preventDefault()
 			Session.set("questionAlert", null)
 			# TODO: fetch id from template, put it in a hidden form field
-			questionId = AnswerableQuestions.currentId()
+			questionId = QuestionList.currentId()
 			comment = template.find("input.new-comment").value
 			Meteor.call "commentOnQuestion", {
 				questionId: questionId
@@ -168,20 +207,20 @@ Template.question.vote = (questionId) ->
 
 # TODO: make this take the quesitonId insead of assuming currentId()
 Template.question.isUsersAnswer = (answer) ->
-	ans = Answers.findOne({ ownerId: Meteor.userId(), questionId: AnswerableQuestions.currentId() })
+	ans = Answers.findOne({ ownerId: Meteor.userId(), questionId: QuestionList.currentId() })
 	ans? and ans.answer == answer
 
 # TODO: make this take the quesitonId insead of assuming currentId()
 Template.question.anyComments = ->
 	Comments.find(
-		{ questionId: AnswerableQuestions.currentId() }
+		{ questionId: QuestionList.currentId() }
 		{ sort: { createdAt: 1 } }
 	).count() > 0
 
 # TODO: make this take the quesitonId insead of assuming currentId()
 Template.question.comments = ->
 	Comments.find(
-		{ questionId: AnswerableQuestions.currentId() }
+		{ questionId: QuestionList.currentId() }
 		{ sort: { createdAt: 1 } }
 	)
 
@@ -191,17 +230,17 @@ Template.question.isCurrentUsersComment = (ownerId) ->
 # TODO: make this take the quesitonId insead of assuming currentQuestion()
 Template.question.rendered = ->
 	# Track view
-	options = { questionId: AnswerableQuestions.currentId() }
+	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options
 
-	if currentUserHasAnswered(AnswerableQuestions.currentId())
+	if currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph
 		dataSet = []
-		_.map AnswerableQuestions.currentQuestion().answersTally, (value, key) ->
+		_.map QuestionList.currentQuestion().answersTally, (value, key) ->
 			dataSet.push {legendLabel: key, magnitude: value, link: "#"}
-		drawPie("questionsAnswerPie", dataSet, "#question-#{AnswerableQuestions.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
+		drawPie("questionsAnswerPie", dataSet, "#question-#{QuestionList.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
 
 		# Treat comments like a chat
-		div = this.find(".past-comments")
+		div = @find(".past-comments")
 		div.scrollTop = div.scrollHeight
 

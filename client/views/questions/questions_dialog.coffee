@@ -9,11 +9,11 @@ openQuestionsDialog = (questionId) ->
 	Session.set("showQuestionsDialog", true)
 
 Template.questionsDialog.question = ->
-	Questions.findOne(Session.get("questionsDialogQuestionId"))
+	QuestionList.currentQuestion()
 
-Template.questionsDialog.rendered = ->
-	question = Questions.findOne(Session.get("questionsDialogQuestionId"))
-	dataSet = []
-	_.map question.answersTally, (value, key) ->
-		dataSet.push {legendLabel: key, magnitude: value, link: "#"}
-	drawPie("questionsDialogPie", dataSet, ".question-dialog .chart", "colorScale20", 10, 100, 30, 0)
+# Template.questionsDialog.rendered = ->
+#	QuestionList.namespace = "questionsDialog"
+
+Template.questionsDialog.created = ->
+	QuestionList.namespace = "questionsDialog"
+	QuestionList.initialize(Session.get("questionsDialogQuestionId"))

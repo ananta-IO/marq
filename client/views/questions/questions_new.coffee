@@ -76,7 +76,7 @@ Template.questionsNew.created = ->
 	Session.set "questionRemainingChars", (140 - questionLength)
 
 Template.questionsNew.rendered = ->
-	wait 2000, () =>
+	wait 1500, () =>
 		unless @find(".pick-image-widget")
 			filepicker.constructWidget(@find("#new-question-image"))
 

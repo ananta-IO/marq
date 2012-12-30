@@ -14,6 +14,7 @@
 					<th>Answers</th>
 					<th>Rating</th>
 					<th>Choices</th>
+					<th>Image</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -34,6 +35,11 @@
 						<td>
 							{{answerChoices}}
 						</td>
+						<td>
+                            {{#if imageUri}}    
+                                <i class="icon-picture"></i>
+                            {{/if}}
+                        </td>
 						<td>
 							{{#if canRemove}}
 								<button class="btn btn-small btn-danger remove" type="button" data-questionId="{{_id}}"><i class="icon-trash icon-white"></i></button>

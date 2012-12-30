@@ -40,26 +40,33 @@ Questions.allow
 objectifyAnswerChoices = (answerChoices) ->
 	_.map(answerChoices, (ac, i) -> {order: i+1, placeholder: ac, value: ac})
 
-unansweredQuestions = (limit = 3) ->
+unansweredQuestionIds = (limit = 3) ->
 	if Meteor.user()
 		answeredQuestionIds = Meteor.user().answeredQuestionIds or []
 		skippedQuestionIds = Meteor.user().skippedQuestionIds or []
 		ids = _.union(answeredQuestionIds, skippedQuestionIds)
-		questions = Questions.find(
+
+		questionIds = _.pluck(Questions.find(
 			{ _id: { $nin : ids } }
-			{ sort: { score: -1 } }
-		).fetch().slice(0, limit)
-		unless questions.length > 0
-			questions = Questions.find(
+			{ sort: { score: -1 }, fields: { score: true } }
+		).fetch(), '_id')
+		unless questionIds.length > 0
+			questionIds = _.pluck(Questions.find(
 				{ _id: { $nin : answeredQuestionIds } }
-				{ sort: { score: -1 } }
-			).fetch().slice(0, limit)
-		questions 
+				{ sort: { score: -1 }, fields: { score: true } }
+			).fetch(), '_id') 
 	else
-		questions = Questions.find(
+		questionIds = _.pluck(Questions.find(
 			{}
-			{ sort: { score: -1 } }
-		).fetch().slice(0, limit)
+			{ sort: { score: -1 }, fields: { score: true } }
+		).fetch(), '_id')
+	questionIds or= []
+	questionIds = questionIds.slice(0, limit) if limit?
+	questionIds
+
+answeredQuestionIds = () ->
+	if Meteor.user()
+		ids = Meteor.user().answeredQuestionIds or []
 
 Meteor.methods
 	# options should include: question, imageUri, answerChoices

@@ -1,7 +1,7 @@
 # ** Users **
 
 Meteor.subscribe('currentUser')
-Meteor.subscribe('allUsers')
+# Meteor.subscribe('allUsers')
 
 
 # ** Questions **

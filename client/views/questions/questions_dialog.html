@@ -1,29 +1,22 @@
 <template name="questionsDialog">
-  <div class="mask"> </div>
-  <div class="modal question-dialog">
-    <div class="modal-header">
-      <button type="button" class="close done">&times;</button>
-      <h3>&nbsp;</h3>
-    </div>
+	<div class="mask"> </div>
+	<div id="question-dialog" class="modal question-dialog" data-focus-on="#question-dialog">
+		<div class="modal-header">
+			<button type="button" class="close done">&times;</button>
+			<h3>&nbsp;</h3>
+		</div>
 
-    <div class="modal-body">
-      <div class="row-fluid">
-        <div class="span12">
-          <h4>
-            {{question.question}}
-          </h4>
-        </div>
-      </div>
-      <div class="row-fluid">
-        <div class="span12">
-          <div class="chart"></div>
-        </div>
-      </div>
-    </div>
+		<div class="modal-body">
+			{{#if question}}
+				{{#with question}}
+					{{> question}}
+				{{/with}}
+			{{/if}}
+		</div>
 
-    <div class="modal-footer">
-      <a href="#" class="btn btn-primary done">Done</a>
-    </div>
-  </div>
-  <div class="modal-backdrop done"></div>
+		<div class="modal-footer">
+			<a href="#" class="btn btn-primary done">Done</a>
+		</div>
+	</div>
+	<div class="modal-backdrop done"></div>
 </template>

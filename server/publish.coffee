@@ -11,6 +11,7 @@ Meteor.publish 'allUsers', ->
 		Meteor.users.find({}, {fields:
 			secret_id: false
 			isAdmin: false
+			name: false
 			emails: false
 			notifications: false
 			'profile.email': false
