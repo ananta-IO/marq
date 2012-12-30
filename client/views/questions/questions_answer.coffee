@@ -76,9 +76,10 @@ class QuestionList
 			@questionIds([questionId])
 			@questionIndex(0)
 		else if _.isEmpty(@questionIds())
-			ids = answeredQuestionIds()
+			ids = answeredQuestionIds() or []
+			index = ids.length
 			@questionIds(ids)
-			@questionIndex(ids.length - 1)
+			if index > 0 then @questionIndex(index - 1) else @questionIndex(0)
 			@findAndAppendMoreQuestions()
 
 	@findAndAppendMoreQuestions: ->

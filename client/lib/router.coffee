@@ -31,8 +31,9 @@
 		Meteor.autorun ->
 			# grab the current page from the router, so this re-runs every time it changes
 			Meteor.Router.page()
-			console.log "-------- Request Start --------"
-			console.log ""
+			
+			# console.log "-------- Request Start --------"
+			# console.log ""
 )()
 
 

@@ -42,7 +42,7 @@ objectifyAnswerChoices = (answerChoices) ->
 
 unansweredQuestionIds = (limit = 3) ->
 	if Meteor.user()
-		answeredQuestionIds = Meteor.user().answeredQuestionIds or []
+		answeredQuestionIds = answeredQuestionIds()
 		skippedQuestionIds = Meteor.user().skippedQuestionIds or []
 		ids = _.union(answeredQuestionIds, skippedQuestionIds)
 
@@ -67,6 +67,8 @@ unansweredQuestionIds = (limit = 3) ->
 answeredQuestionIds = () ->
 	if Meteor.user()
 		ids = Meteor.user().answeredQuestionIds or []
+	else
+		[]
 
 Meteor.methods
 	# options should include: question, imageUri, answerChoices
