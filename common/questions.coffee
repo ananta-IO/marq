@@ -2,6 +2,7 @@
 # Each question is represented by a document in the Questions collection:
 #   ownerId: String user id
 #   question: String
+#   imageUri: String
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
 #   answersTally: Object with the breakdown for each answer choice like {ansChoice0: 3, ansChoice1: 89, ansChoice3: 0}
 #   answerCount: Integer count of answers
@@ -61,9 +62,10 @@ unansweredQuestions = (limit = 3) ->
 		).fetch().slice(0, limit)
 
 Meteor.methods
-	# options should include: question, answerChoices
+	# options should include: question, imageUri, answerChoices
 	createQuestion: (options) ->
 		options = options or {}
+		options.imageUri or= null
 		
 		throw new Meteor.Error(403, "Log in to ask a question")  unless @userId
 		throw new Meteor.Error(400, "Question can't be blank")  unless typeof options.question is "string" and options.question.length
@@ -81,6 +83,7 @@ Meteor.methods
 		Questions.insert
 			ownerId: @userId
 			question: options.question
+			imageUri: options.imageUri
 			answerChoices: answerChoices
 			answersTally: answersTally
 			answerCount: 0

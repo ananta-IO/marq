@@ -79,6 +79,13 @@
 				<p class="lead">
 					{{question}}
 				<p/>
+				{{#if imageUri}}
+					<div class="row-fluid">
+						<div class="span12" id="preview-image">
+							<img src="{{imageUri}}" class="span12" style="max-width: 900px; max-height: 500px;"></img>
+						</div>
+					</div>
+				{{/if}}
 			</blockquote>
 
 			{{#if currentUserHasAnswered _id}}

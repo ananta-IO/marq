@@ -5,10 +5,12 @@ Template.questionsNew.events
 
 		question = $.trim(template.find("textarea.question").value)
 		Session.set 'question', question
+		imageUri = Session.get "new question image uri"
 		answerChoices = _.without(_.uniq(_.map(template.findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
 		Session.set 'answerChoices', answerChoices
 		Meteor.call "createQuestion", {
 			question: question
+			imageUri: imageUri
 			answerChoices: answerChoices
 		}, (error, question) ->
 			if error
@@ -17,7 +19,15 @@ Template.questionsNew.events
 				Session.set("questionsNewAlert", {type: 'success', message: 'Question successfully asked. We will automatically show your question to randomly selected people. You can improve your results by sharing this with your friends.', dismiss: true})
 				Session.set("question", '')
 				Session.set("answerChoices", null)
+				Session.set "new question image uri", null
 	
+	'change #new-question-image': (event) ->
+        Session.set "new question image uri", event.fpfile.url
+
+	"click #preview-image .remove": (event, template) ->
+		event.preventDefault()
+		Session.set "new question image uri", null
+
 	"click .answer-choice-wrap .remove": (event, template) ->
 		event.preventDefault()
 		Session.set("questionsNewAlert", null)
@@ -34,7 +44,7 @@ Template.questionsNew.events
 		Session.set("questionsNewAlert", null)
 		Session.set 'answerChoices', _.without(_.uniq(_.map(template.findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
 		if (event.which == 13) then $(event.target).focusNextInputField()
-		
+
 Template.questionsNew.alert = ->
 	Session.get "questionsNewAlert"
 
@@ -43,6 +53,9 @@ Template.questionsNew.question = ->
 
 Template.questionsNew.questionRemainingChars = ->
 	Session.get "questionRemainingChars"
+
+Template.questionsNew.imageUri = ->
+	Session.get "new question image uri"
 
 Template.questionsNew.objectifiedAnswerChoices = ->
 	answerChoices = Session.get 'answerChoices'
@@ -54,3 +67,10 @@ Template.questionsNew.objectifiedAnswerChoices = ->
 	else
 		objectifiedAnswerChoices = [{order: 1, placeholder: 'yes', value: ''}, {order: 2, placeholder: 'no', value: ''}, {order: 3, placeholder: "don't care", value: ''}]
 	objectifiedAnswerChoices
+
+Template.questionsNew.rendered = ->
+	wait 1000, () =>
+		unless @find(".pick-image-widget")
+			filepicker.constructWidget(@find("#new-question-image"))
+
+
