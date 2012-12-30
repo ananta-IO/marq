@@ -42,6 +42,7 @@ drawPie = (pieName, dataSet, selectString, colors, margin, outerRadius, innerRad
 
 	canvasWidth = 700
 	pieWidthTotal = outerRadius * 2
+	animationDuration = 0
 	pieCenterX = outerRadius + margin / 2
 	pieCenterY = outerRadius + margin / 2
 	legendBulletOffset = -70
@@ -163,7 +164,7 @@ drawPie = (pieName, dataSet, selectString, colors, margin, outerRadius, innerRad
 		.on("mouseout", synchronizedMouseOut)
 		.transition()
 		# .ease("bounce")
-		.duration(1000)
+		.duration(animationDuration)
 		.delay((d, i) ->
 			i * 50
 		).attrTween "d", tweenPie

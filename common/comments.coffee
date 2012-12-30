@@ -43,3 +43,7 @@ Meteor.methods
 			comment: options.comment
 			votes: {}
 			createdAt: new Date
+
+		Meteor.users.update Meteor.userId(), {
+			$inc: { postCommentCount: 1 }
+		}

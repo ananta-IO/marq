@@ -35,3 +35,13 @@ Meteor.methods
 			questionId: options.questionId
 			vote: options.incValue
 			createdAt: new Date
+
+		Meteor.users.update Meteor.userId(), {
+			$inc: { castVoteCount: 1 }
+		}
+
+		# Only inc the karma of the owner if the voter is not the owner of the question
+		if question.ownerId != Meteor.userId()
+			Meteor.users.update question.ownerId, {
+				$inc: { karma: options.karma }
+			}

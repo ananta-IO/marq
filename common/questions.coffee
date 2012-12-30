@@ -5,10 +5,13 @@
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
 #   answersTally: Object with the breakdown for each answer choice like {ansChoice0: 3, ansChoice1: 89, ansChoice3: 0}
 #   answerCount: Integer count of answers
+#   skipCount: Integer count of number of users who skipped this
+#	viewCount: Integer count of number of users who have viewed this
 #   voteTally: Integer count of for votes minus against votes
 #   voteCount: Integer count of votes
 #   commentCount: Integer count of comments
-#   score: Integer count of the aggregate score of a question
+#   score: Float count of the sytem calculated score of a question, taking age into account
+#   baseScore: Float count of the static score (before age is counted)
 #   createdAt: new Date
 Questions = new Meteor.Collection("questions")
 
@@ -37,19 +40,25 @@ objectifyAnswerChoices = (answerChoices) ->
 	_.map(answerChoices, (ac, i) -> {order: i+1, placeholder: ac, value: ac})
 
 unansweredQuestions = (limit = 3) ->
-	answeredQuestionIds = Meteor.user().answeredQuestionIds or []
-	skippedQuestionIds = Meteor.user().skippedQuestionIds or []
-	ids = _.union(answeredQuestionIds, skippedQuestionIds)
-	questions = Questions.find(
-		{ _id: { $nin : ids } }
-		{ sort: { voteTally: -1, createdAt: -1 } }
-	).fetch().slice(0, limit)
-	unless questions.length > 0
+	if Meteor.user()
+		answeredQuestionIds = Meteor.user().answeredQuestionIds or []
+		skippedQuestionIds = Meteor.user().skippedQuestionIds or []
+		ids = _.union(answeredQuestionIds, skippedQuestionIds)
 		questions = Questions.find(
-			{ _id: { $nin : answeredQuestionIds } }
-			{ sort: { voteTally: -1, createdAt: -1 } }
+			{ _id: { $nin : ids } }
+			{ sort: { score: -1 } }
 		).fetch().slice(0, limit)
-	questions 
+		unless questions.length > 0
+			questions = Questions.find(
+				{ _id: { $nin : answeredQuestionIds } }
+				{ sort: { score: -1 } }
+			).fetch().slice(0, limit)
+		questions 
+	else
+		questions = Questions.find(
+			{}
+			{ sort: { score: -1 } }
+		).fetch().slice(0, limit)
 
 Meteor.methods
 	# options should include: question, answerChoices
@@ -75,11 +84,39 @@ Meteor.methods
 			answerChoices: answerChoices
 			answersTally: answersTally
 			answerCount: 0
+			skipCount: 0
+			viewCount: 0
 			voteTally: 0
 			voteCount: 0
 			commentCount: 0
 			score: 0
+			baseScore: 0
 			createdAt: new Date
+
+		Meteor.users.update Meteor.userId(), {
+			$inc: { askQuestionCount: 1 }
+		}
+
+
+	# options should include: questionId
+	viewQuestion: (options) ->
+		options = options or {}
+
+		if Meteor.userId()?
+			question = Questions.findOne(options.questionId)
+			view = Views.findOne({ ownerId: Meteor.userId(), questionId: options.questionId })
+			if question? and !view?
+				Views.insert 
+					ownerId: Meteor.userId()
+					questionId: options.questionId
+					createdAt: new Date
+				Questions.update options.questionId, {
+					$inc: { viewCount: 1 }
+				}
+				Meteor.users.update Meteor.userId(), {
+					$inc: { viewQuestionCount: 1 }
+				}
+
 
 
 	# options should include: questionId
@@ -91,8 +128,11 @@ Meteor.methods
 		throw new Meteor.Error(404, "No such question")  unless question
 
 		unless options.questionId in Meteor.user().skippedQuestionIds
-			Meteor.users.update @userId, {
+			Meteor.users.update Meteor.userId(), {
 				$push: { skippedQuestionIds: options.questionId }
+			}
+			Questions.update options.questionId, {
+				$inc: { skipCount: 1 }
 			}
 
 
@@ -100,7 +140,7 @@ Meteor.methods
 	answerQuestion: (options) ->
 		options = options or {}
 
-		# the validations are performed in createAnswer so this must happen first
+		# The validations are performed in createAnswer so this must happen first
 		Meteor.call "createAnswer", options
 
 		updateData =
@@ -109,25 +149,35 @@ Meteor.methods
 		Questions.update options.questionId, updateData
 	
 
-
 	# options should include: questionId, vote
 	rateQuestion: (options) ->
 		options = options or {}
-		if options.vote == 'for' then options.incValue = 1 
-		if options.vote == 'against' then options.incValue = -1
+		if options.vote == 'for' 
+			options.incValue = 1
+			options.karma = 3
+		else if options.vote == 'against'
+			options.incValue = -1
+			options.karma = -1
+		else
+			options.incValue = 0
+			options.karma = 0
 
-		# the validations are performed in createVote so this must happen first
+		# The validations are performed in createVote so this must happen first
 		Meteor.call "createVote", options
 
+		options.votePower = 1 + (Meteor.user().karma/100)
+		options.incBaseScore = options.votePower * options.incValue
+
 		Questions.update options.questionId, {
-			$inc: { voteTally: options.incValue, voteCount: 1 }
+			$inc: { voteTally: options.incValue, voteCount: 1, baseScore: options.incBaseScore }
 		}
+
 
 	# options should include: questionId, comment
 	commentOnQuestion: (options) ->
 		options = options or {}
 
-		# the validations are performed in createVote so this must happen first
+		# The validations are performed in createComment so this must happen first
 		Meteor.call "createComment", options
 
 		Questions.update options.questionId, {

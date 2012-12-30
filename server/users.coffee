@@ -1,6 +1,11 @@
 Accounts.onCreateUser (options, user) ->
 	user.profile = options.profile || {}
-	user.karma = 0
+	user.karma = 101
+	user.viewQuestionCount = 0
+	user.answerQuestionCount = 0
+	user.askQuestionCount = 0
+	user.postCommentCount = 0
+	user.castVoteCount = 0
 	user.answeredQuestionIds = []
 	user.skippedQuestionIds = []
 

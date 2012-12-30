@@ -1,22 +1,42 @@
 <template name="header">
-  <div class="navbar navbar-fixed-top">
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="brand" href="/">
-          <!-- m&#257;rq -->
-          marq
-        </a>
-        <ul class="nav" style="float: right;">
-          <li> 
-            {{loginButtons align="right"}}
-          </li>
-        </ul>
-        <ul class="nav">
-          <li><a href="/questions/new">Ask</a></li>
-          <li><a href="/">Answer</a></li>
-          <li><a href="/questions">Results</a></li>
-        </ul>
-      </div>
-    </div>
-  </div>
+	<div id="header" class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+
+				<div class="nav-collapse collapse">
+					<ul class="nav" style="float: right;">
+						{{#if user}}
+							{{#with user}}
+								<li> 
+									<a href="/">{{karma}} karma</a>
+								</li>
+							{{/with}}
+						{{/if}}
+						<li> 
+							{{loginButtons align="right"}}
+						</li>
+					</ul>
+				</div>
+				
+				<a class="brand" href="/">
+					<!-- m&#257;rq -->
+					marq
+				</a>
+
+
+				<ul class="nav">
+					<li><a href="/questions/new">Ask</a></li>
+					<li><a href="/">Answer</a></li>
+					<li><a href="/questions">Results</a></li>
+				</ul>
+				
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+
+			</div>
+		</div>
+	</div>
 </template>

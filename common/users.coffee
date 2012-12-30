@@ -19,4 +19,4 @@ isAdmin = (user) ->
 		!!user.isAdmin
 
 currentUserHasAnswered = (questionId) ->
-	_.contains(Meteor.user().answeredQuestionIds, questionId)
+	Meteor.user() and _.contains(Meteor.user().answeredQuestionIds, questionId)

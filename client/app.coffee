@@ -82,3 +82,8 @@ Meteor.subscribe('myVotes')
 # ** Comments **
 
 Meteor.subscribe('allComments')
+
+
+# ** Views **
+
+Meteor.subscribe('myViews')

@@ -4,7 +4,7 @@ Template.questionsListAnswered.events
 		openQuestionsDialog(event.currentTarget.getAttribute('data-questionId'))
 		
 Template.questionsListAnswered.questions = ->
-	answeredQuestionIds = Meteor.user().answeredQuestionIds or []
+	answeredQuestionIds = if Meteor.user() then Meteor.user().answeredQuestionIds else []
 	Questions.find({ _id: { $in: answeredQuestionIds } }, { sort: { voteTally: -1, createdAt: -1 } })
 
 Template.questionsListAnswered.answer = (question) ->
@@ -12,5 +12,5 @@ Template.questionsListAnswered.answer = (question) ->
 	ans.answer if ans
 
 Template.questionsListAnswered.questionCount = ->
-	answeredQuestionIds = Meteor.user().answeredQuestionIds or []
+	answeredQuestionIds = if Meteor.user() then Meteor.user().answeredQuestionIds else []
 	Questions.find({ _id: { $in: answeredQuestionIds } }, { sort: { voteTally: -1, createdAt: -1 } }).count()

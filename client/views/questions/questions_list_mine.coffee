@@ -9,10 +9,10 @@ Template.questionsListMine.events
 
 
 Template.questionsListMine.questions = ->
-	Questions.find({ ownerId: @userId }, { sort: { voteTally: -1, createdAt: -1 } })
+	Questions.find({ ownerId: Meteor.userId() }, { sort: { voteTally: -1, createdAt: -1 } })
 
 Template.questionsListMine.questionCount = ->
-	Questions.find({ ownerId: @userId }, { sort: { voteTally: -1, createdAt: -1 } }).count()
+	Questions.find({ ownerId: Meteor.userId() }, { sort: { voteTally: -1, createdAt: -1 } }).count()
 
 Template.questionsListMine.canRemove = ->
 	canRemoveQuestion(Meteor.userId(), @)

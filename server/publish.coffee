@@ -68,3 +68,9 @@ Meteor.publish "myVotes", ->
 
 Meteor.publish "allComments", ->
 	Comments.find()
+
+
+# ** Views **
+
+Meteor.publish "myViews", ->
+	Views.find({ ownerId: @userId })

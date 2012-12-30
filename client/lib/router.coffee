@@ -12,6 +12,7 @@
 		"/about": "about"
 		"/answer": "questionsAnswer"
 		"/ask": "questionsNew"
+		"/faq": "faq"
 		"/questions": "questionsIndex"
 		"/questions/answer": "questionsAnswer"
 		"/questions/new": "questionsNew"

@@ -37,5 +37,6 @@ Meteor.methods
 
 		Meteor.users.update @userId, {
 			$push: { answeredQuestionIds: options.questionId }
+			$inc: { answerQuestionCount: 1 }
 		}
 

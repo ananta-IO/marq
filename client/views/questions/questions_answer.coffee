@@ -28,8 +28,10 @@ Template.questionsAnswer.nextQuestion = ->
 # Render
 Template.questionsAnswer.rendered = ->
 	Mousetrap.bind 'right', () ->
+		Session.set("questionAlert", null)
 		AnswerableQuestions.goForward({skip: true})
 	Mousetrap.bind 'left', () ->
+		Session.set("questionAlert", null)
 		AnswerableQuestions.goBack()
 
 	$('.flip').css 'height', $('.main-answer-view').outerHeight()
@@ -185,12 +187,18 @@ Template.question.isCurrentUsersComment = (ownerId) ->
 
 # TODO: make this take the quesitonId insead of assuming currentQuestion()
 Template.question.rendered = ->
+	# Track view
+	options = { questionId: AnswerableQuestions.currentId() }
+	Meteor.call 'viewQuestion', options
+
 	if currentUserHasAnswered(AnswerableQuestions.currentId())
+		# Append D3 graph
 		dataSet = []
 		_.map AnswerableQuestions.currentQuestion().answersTally, (value, key) ->
 			dataSet.push {legendLabel: key, magnitude: value, link: "#"}
 		drawPie("questionsAnswerPie", dataSet, "#question-#{AnswerableQuestions.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
 
+		# Treat comments like a chat
 		div = this.find(".past-comments")
 		div.scrollTop = div.scrollHeight
 

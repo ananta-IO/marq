@@ -2,8 +2,9 @@ Template.footer.year = ->
 	new Date().getFullYear()
 
 Template.footer.rendered = ->
-	buttons = $(@find("#footer .addthis_toolbox")).children()  
-	console.log buttons
+	reinitAddThis()
+
+	buttons = $(@find("#footer .addthis_toolbox")).children()
 	pre = 99
 	cur = 0
 	hover = false
