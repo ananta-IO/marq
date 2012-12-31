@@ -8,6 +8,7 @@ Accounts.onCreateUser (options, user) ->
 	user.castVoteCount = 0
 	user.answeredQuestionIds = []
 	user.skippedQuestionIds = []
+	user.createdAt = new Date
 
 	
 	# users start pending and need to be invited
@@ -33,6 +34,15 @@ Accounts.onCreateUser (options, user) ->
 	# if successfully obtained facebook profile, save it off
 	user.profile.facebook = result.data  if not result.error and result.data
 
-	# trackEvent('new user', {username: user.username, email: user.profile.email})
+	# track and identify new user
+	analytics.identify user._id,
+		name: user.profile.name
+		email: user.profile.facebook.email
+		createdAt: user.createdAt
+		karma: user.karma
+	analytics.track 'user signs up',
+		name: user.profile.name
+		email: user.profile.facebook.email
+		createdAt: user.createdAt
 
 	return user
