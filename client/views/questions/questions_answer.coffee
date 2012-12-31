@@ -204,9 +204,9 @@ Template.question.vote = (questionId) ->
 	vote = Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})
 	if vote
 		if vote.vote == 1
-			'yes'
+			'it is'
 		else
-			'no'
+			'it is not'
 	else
 		'you have not rated this yet'
 

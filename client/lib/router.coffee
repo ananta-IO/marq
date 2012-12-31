@@ -13,6 +13,7 @@
 		"/answer": "questionsAnswer"
 		"/ask": "questionsNew"
 		"/faq": "faq"
+		"/profile": "questionsIndex"
 		"/questions": "questionsIndex"
 		"/questions/answer": "questionsAnswer"
 		"/questions/new": "questionsNew"
