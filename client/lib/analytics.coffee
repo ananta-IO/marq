@@ -18,18 +18,17 @@ analytics.load = (apiKey) ->
 		i++
 		
 analyticsRequest = ->
-	console.log getSetting('segmentIoId') 
-	segementIoId = getSetting('segmentIoId') 
-	segementIoId or= 'g2x35t4'
-	analytics.load(segementIoId)
+	segementIoId = getSetting('segmentIoId')
+	if segementIoId
+		analytics.load(segementIoId)
 
-	Meteor.autorun ->
-		user = Meteor.user()
-		if user and user.profile and user.answerQuestionCount and user.askQuestionCount		
-			analytics.identify user._id,
-				name: user.profile.name
-				email: user.profile.facebook.email
-				createdAt: user.createdAt
-				karma: user.karma
-				answerQuestionCount: user.answerQuestionCount
-				askQuestionCount: user.askQuestionCount
+		Meteor.autorun ->
+			user = Meteor.user()
+			if user and user.profile and user.answerQuestionCount and user.askQuestionCount		
+				analytics.identify user._id,
+					name: user.profile.name
+					email: user.profile.facebook.email
+					createdAt: user.createdAt
+					karma: user.karma
+					answerQuestionCount: user.answerQuestionCount
+					askQuestionCount: user.askQuestionCount
