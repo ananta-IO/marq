@@ -18,7 +18,9 @@ analytics.load = (apiKey) ->
 		i++
 		
 analyticsRequest = ->
-	segementIoId = getSetting('segementIoId') or 'g2x35t4'
+	console.log getSetting('segmentIoId') 
+	segementIoId = getSetting('segmentIoId') 
+	segementIoId or= 'g2x35t4'
 	analytics.load(segementIoId)
 
 	Meteor.autorun ->
