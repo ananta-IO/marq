@@ -31,12 +31,11 @@ Marq is currently under development and welcomes all feature requests, bug repor
 
 ## Getting Started
 
-[Learn javascript](http://www.codecademy.com/)
+Submit bugs and feature requests as questions on [marq](http://www.marq.io)
 
 &
 
-Submit bugs and feature requests as questions on [marq](http://www.marq.io)
-
+[Learn javascript](http://www.codecademy.com/)
 
 # Developers
 
