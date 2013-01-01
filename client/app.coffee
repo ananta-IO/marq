@@ -1,23 +1,14 @@
+# ** Settings **
+
+Meteor.subscribe 'settings', ->
+	# runs once on site load
+	Session.set('settingsLoaded', true)
+
+
 # ** Users **
 
 Meteor.subscribe('currentUser')
 # Meteor.subscribe('allUsers')
-
-Meteor.startup ->
-	if Meteor.user()
-		user = Meteor.user()
-		analytics.identify user._id,
-			name: user.profile.name
-			email: user.profile.facebook.email
-			createdAt: user.createdAt
-			karma: user.karma
-	Meteor.autorun ->
-		if Meteor.user()
-			user = Meteor.user()
-			analytics.track 'user logs in',
-				name: user.profile.name
-				email: user.profile.facebook.email
-				createdAt: user.createdAt
 
 
 # ** Questions **

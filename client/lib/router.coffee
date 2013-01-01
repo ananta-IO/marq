@@ -18,24 +18,30 @@
 		"/questions": "questionsIndex"
 		"/questions/answer": "questionsAnswer"
 		"/questions/new": "questionsNew"
-		# "/profile": "questionsListMine"
+		"/settings": "settings"
 
 
-	# Meteor.Router.filters
+	Meteor.Router.filters
+	 	isAdmin: (page) ->
+	 		(if isAdmin(Meteor.user()) then page else "no_rights")
 	#	awaitSubscription: (page) ->
 	#		if Session.equals(PAGE_SUBS[page], true) then page else 'loading'
 
 
 	# Meteor.Router.filter 'awaitSubscription', {only: ['questions_answer', 'questions_answered', 'questions_asked', 'questions_page']}
-	
+	Meteor.Router.filter "isAdmin",
+		only: ["settings"]
+
 
 	Meteor.startup ->
 		Meteor.autorun ->
 			# grab the current page from the router, so this re-runs every time it changes
-			Meteor.Router.page()
-			
+			Meteor.Router.page()		
 			# console.log "-------- Request Start --------"
 			# console.log ""
+
+			# log this request with mixpanel, etc
+			analyticsRequest()
 )()
 
 

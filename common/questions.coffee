@@ -109,12 +109,6 @@ Meteor.methods
 			$inc: { askQuestionCount: 1 }
 		}
 
-		analytics.track 'question asked',
-			question: options.question
-			imageUri: options.imageUri
-			answerChoices: answerChoices
-			answersTally: answersTally
-
 
 	# options should include: questionId
 	viewQuestion: (options) ->
@@ -135,10 +129,6 @@ Meteor.methods
 					$inc: { viewQuestionCount: 1 }
 				}
 
-				analytics.track 'question viewed',
-					questionId: options.questionId
-
-
 
 	# options should include: questionId
 	skipQuestion: (options) ->
@@ -156,8 +146,6 @@ Meteor.methods
 				$inc: { skipCount: 1 }
 			}
 
-			analytics.track 'question skipped',
-				questionId: options.questionId
 
 	# options should include: questionId, answer
 	answerQuestion: (options) ->
@@ -171,9 +159,6 @@ Meteor.methods
 		updateData.$inc["answersTally.#{options.answer}"] = 1
 		Questions.update options.questionId, updateData
 	
-		analytics.track 'question answered',
-			questionId: options.questionId
-			answer: options.answer
 
 	# options should include: questionId, vote
 	rateQuestion: (options) ->
@@ -198,11 +183,6 @@ Meteor.methods
 			$inc: { voteTally: options.incValue, voteCount: 1, baseScore: options.incBaseScore }
 		}
 
-		analytics.track 'question rated',
-			questionId: options.questionId
-			vote: options.incValue
-			votePower: options.votePower 
-
 
 	# options should include: questionId, comment
 	commentOnQuestion: (options) ->
@@ -214,7 +194,4 @@ Meteor.methods
 		Questions.update options.questionId, {
 			$inc: { commentCount: 1 }
 		}
-
-		analytics.track 'question commented on',
-			questionId: options.questionId
-			comment: options.comment
+		

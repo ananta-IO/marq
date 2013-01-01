@@ -15,6 +15,11 @@ Template.questionsNew.events
 		}, (error, question) ->
 			if error
 				Session.set("questionsNewAlert", {type: 'error', message: error.reason})
+				analytics.track 'question asked error',
+					question: question
+					imageUri: imageUri
+					answerChoices: answerChoices
+					error: error
 			else
 				Session.set("questionsNewAlert", {type: 'success', message: 'Question successfully asked. We will automatically show your question to randomly selected people. You can improve your results by sharing this with your friends.', dismiss: true})
 				Session.set("question", '')
@@ -22,6 +27,10 @@ Template.questionsNew.events
 				Session.set "new question image uri", null
 				Session.set "questionRemainingChars", (140 - $(event.target).val().length)
 				Session.set "resetFpWidget", (Math.random()*999999)
+				analytics.track 'question asked success',
+					question: question
+					imageUri: imageUri
+					answerChoices: answerChoices
 	
 	'change #new-question-image': (event) ->
         Session.set "new question image uri", event.fpfile.url

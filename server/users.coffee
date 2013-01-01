@@ -34,15 +34,4 @@ Accounts.onCreateUser (options, user) ->
 	# if successfully obtained facebook profile, save it off
 	user.profile.facebook = result.data  if not result.error and result.data
 
-	# track and identify new user
-	analytics.identify user._id,
-		name: user.profile.name
-		email: user.profile.facebook.email
-		createdAt: user.createdAt
-		karma: user.karma
-	analytics.track 'user signs up',
-		name: user.profile.name
-		email: user.profile.facebook.email
-		createdAt: user.createdAt
-
 	return user

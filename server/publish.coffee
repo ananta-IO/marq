@@ -1,3 +1,9 @@
+# ** Settings **
+
+Meteor.publish 'settings', ->
+	Settings.find()
+
+
 # ** Users **
 
 Meteor.publish 'currentUser', ->

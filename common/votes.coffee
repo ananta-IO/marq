@@ -45,6 +45,3 @@ Meteor.methods
 			Meteor.users.update question.ownerId, {
 				$inc: { karma: options.karma }
 			}
-			analytics.track 'karma updated',
-				userId: question.ownerId
-				newKarma: options.karma

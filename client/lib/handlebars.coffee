@@ -21,12 +21,12 @@
 #	action = (if (typeof action isnt "string") then null else action)
 #	canDownvote Meteor.user(), collection, action
 
-# Handlebars.registerHelper "isAdmin", (showError) ->
-#	if isAdmin(Meteor.user())
-#		true
-#	else
-#		throwError "Sorry, you do not have access to this page"  if (typeof showError is "string") and (showError is "true")
-#		false
+Handlebars.registerHelper "isAdmin", (showError) ->
+	if isAdmin(Meteor.user())
+		true
+	else
+		alert "Sorry, you do not have access to this page"  if (typeof showError is "string") and (showError is "true")
+		false
 
 # Handlebars.registerHelper "canEdit", (collectionName, item, action) ->
 #	action = (if (typeof action isnt "string") then null else action)

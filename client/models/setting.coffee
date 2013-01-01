@@ -1,3 +1,12 @@
+Setting = FormModel.extend(
+	blankSchema:
+		segmentIoId: 'g2x35t4' 
+
+	init: (options) ->
+		@_super Settings, options
+		@overwriteTitle "segmentIoId", "Segment.io ID"
+)
+
 # Setting = FormModel.extend(
 #	blankSchema:
 #		requireViewInvite: false

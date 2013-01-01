@@ -6,24 +6,32 @@ Template.questionsAnswer.events
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		QuestionList.goForward({skip: true})
+		analytics.track 'question next click',
+			questionId: QuestionList.currentId()
 
 	# skip/next unanswered question
 	"click .next-unanswered-question": (event, template) ->
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		QuestionList.goToNextUnanswered()
+		analytics.track 'question next unanswered click',
+			questionId: QuestionList.currentId()
 
 	# previous question
 	"click .previous-question": (event, template) ->
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		QuestionList.goBack()
+		analytics.track 'question previous click',
+			questionId: QuestionList.currentId()
 
 	# previous unanswered question
 	"click .previous-unanswered-question": (event, template) ->
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		QuestionList.goToPreviousUnanswered()
+		analytics.track 'question previous unanswered click',
+			questionId: QuestionList.currentId()
 
 # Current/Primary Question
 Template.questionsAnswer.question = ->
@@ -44,15 +52,23 @@ Template.questionsAnswer.rendered = ->
 	Mousetrap.bind 'right', () ->
 		Session.set("questionAlert", null)
 		QuestionList.goForward({skip: true})
+		analytics.track 'question next keyboard',
+			questionId: QuestionList.currentId()
 	Mousetrap.bind 'left', () ->
 		Session.set("questionAlert", null)
 		QuestionList.goBack()
+		analytics.track 'question previous keyboard',
+			questionId: QuestionList.currentId()
 	Mousetrap.bind 'shift+right', () ->
 		Session.set("questionAlert", null)
 		QuestionList.goToNextUnanswered()
+		analytics.track 'question next unanswered keyboard',
+			questionId: QuestionList.currentId()
 	Mousetrap.bind 'shift+left', () ->
 		Session.set("questionAlert", null)
 		QuestionList.goToPreviousUnanswered()
+		analytics.track 'question previous unanswered keyboard',
+			questionId: QuestionList.currentId()
 
 	$('.flip').css 'height', $('.main-answer-view').outerHeight()
 	wait 2000, =>
@@ -151,8 +167,15 @@ Template.question.events
 		}, (error, question) ->
 			if error
 				Session.set("questionAlert", {type: 'error', message: error.reason})
+				analytics.track 'question answered error',
+					questionId: questionId
+					answer: answer
+					error: error
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your response. Please rate this question.', dismiss: true})
+				analytics.track 'question answered success',
+					questionId: questionId
+					answer: answer
 
 	# vote
 	"click button.vote": (event, template) ->
@@ -169,9 +192,16 @@ Template.question.events
 			if error
 				# Session.set("questionAlert", {type: 'error', message: error.reason})
 				QuestionList.goToNextUnanswered()
+				analytics.track 'question rated error',
+					questionId: questionId
+					vote: vote
+					error: error
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
 				QuestionList.goToNextUnanswered()
+				analytics.track 'question rated success',
+					questionId: questionId
+					vote: vote
 
 	# comment
 	"keyup input.new-comment": (event, template) ->
@@ -187,9 +217,16 @@ Template.question.events
 			}, (error, question) ->
 				if error
 					Session.set("questionAlert", {type: 'error', message: error.reason})
+					analytics.track 'question commented error',
+						questionId: questionId
+						comment: comment
+						error: error
 				else
 					Session.set("questionAlert", null)
 					template.find("input.new-comment").value = null
+					analytics.track 'question commented success',
+						questionId: questionId
+						comment: comment
 
 Template.question.alert = ->
 	Session.get "questionAlert"
@@ -249,3 +286,10 @@ Template.question.rendered = ->
 		div = @find(".past-comments")
 		div.scrollTop = div.scrollHeight
 
+Template.question.created = ->
+	question = QuestionList.currentQuestion()
+	if question
+		analytics.track 'question viewed',
+			questionId: question._id
+			question: question.question
+			answerChoices: question.answerChoices

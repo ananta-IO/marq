@@ -1,11 +1,17 @@
 Template.questionsListMine.events 
 	"click .questions-list .remove": (event, template) ->
 		event.preventDefault()
-		Questions.remove(event.currentTarget.getAttribute('data-questionId'))
+		questionId = event.currentTarget.getAttribute('data-questionId')
+		Questions.remove(questionId)
+		analytics.track 'question delete',
+			questionId: questionId
 
 	"click .questions-list .view-question": (event, template) ->
 		event.preventDefault()
-		openQuestionsDialog(event.currentTarget.getAttribute('data-questionId'))
+		questionId = event.currentTarget.getAttribute('data-questionId')
+		openQuestionsDialog(questionId)
+		analytics.track 'question view asked',
+			questionId: questionId
 
 
 Template.questionsListMine.questions = ->

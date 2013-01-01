@@ -1,7 +1,10 @@
 Template.questionsListAnswered.events 
 	"click .questions-list .view-question": (event, template) ->
 		event.preventDefault()
-		openQuestionsDialog(event.currentTarget.getAttribute('data-questionId'))
+		questionId = event.currentTarget.getAttribute('data-questionId')
+		openQuestionsDialog(questionId)
+		analytics.track 'question view answered',
+			questionId: questionId
 		
 Template.questionsListAnswered.questions = ->
 	ids = answeredQuestionIds()
