@@ -8,7 +8,7 @@
     "basePackages": {
       "router": {},
       "moment": {},
-      "foundation-icons-general": {}
+      "bafa": {}
     },
     "packages": {
       "router": {
@@ -21,10 +21,10 @@
         "tag": "v1.7.0",
         "commit": "c64b6ec0e714b9556f4b6643d430b868ba69d3d7"
       },
-      "foundation-icons-general": {
-        "git": "https://github.com/IainShigeoka/meteor-foundation-icons-general.git",
-        "tag": "v1.0.1",
-        "commit": "0d16dc77ffb76180d63dcbc58716bd1dbf7d66d5"
+      "bafa": {
+        "git": "https://github.com/jackp/BAFA.git",
+        "tag": "v0.1.0",
+        "commit": "25276aa4c8af17366820958f01aab07a014384ee"
       },
       "page-js": {
         "git": "https://github.com/tmeasday/meteor-page-js.git",

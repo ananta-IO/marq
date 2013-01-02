@@ -123,9 +123,16 @@ input.press-enter
 			cursor: pointer
 		p
 			position: absolute
-			top: 50%
 			left: 0
 			right: 0
+			&.top
+				top: 30px
+			&.middle
+				top: 50%
+			&.bottom
+				bottom: 30px
+			i
+				font-size: 20px
 
 .question
 	.answer-choices

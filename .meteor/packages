@@ -6,7 +6,6 @@
 preserve-inputs
 accounts-base
 accounts-facebook
-bootstrap
 coffeescript
 accounts-ui-unstyled
 stylus
@@ -14,3 +13,4 @@ d3
 router
 moment
 spiderable
+bafa
