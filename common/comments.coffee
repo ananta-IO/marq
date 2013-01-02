@@ -38,7 +38,7 @@ Meteor.methods
 		
 		Comments.insert
 			ownerId: @userId
-			ownerName: Meteor.user().profile.name
+			ownerName: getUsername(Meteor.user())
 			questionId: options.questionId
 			comment: options.comment
 			votes: {}

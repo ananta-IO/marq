@@ -20,3 +20,6 @@ isAdmin = (user) ->
 
 currentUserHasAnswered = (questionId) ->
 	_.contains(answeredQuestionIds(), questionId)
+
+getUsername = (user) ->
+	user.profile.facebook.username or user.profile.name
