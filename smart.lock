@@ -23,8 +23,8 @@
       },
       "bafa": {
         "git": "https://github.com/jackp/BAFA.git",
-        "tag": "v0.1.0",
-        "commit": "25276aa4c8af17366820958f01aab07a014384ee"
+        "tag": "v0.2.2",
+        "commit": "9d5e2f8605126c908949f550dc6a1f4e01e7ff62"
       },
       "page-js": {
         "git": "https://github.com/tmeasday/meteor-page-js.git",
