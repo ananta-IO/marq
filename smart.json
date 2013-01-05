@@ -1,7 +1,6 @@
 {
   "packages": {
     "router": {},
-    "moment": {},
-    "bafa": {}
+    "moment": {}
   }
 }
