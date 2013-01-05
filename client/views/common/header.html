@@ -3,20 +3,18 @@
 		<div class="navbar-inner">
 			<div class="container">
 
-				<div class="nav-collapse collapse">
-					<ul class="nav" style="float: right;">
-						{{#if user}}
-							{{#with user}}
-								<li> 
-									<a href="/faq#q-karma">{{karma}} karma</a>
-								</li>
-							{{/with}}
-						{{/if}}
-						<li> 
-							{{loginButtons align="right"}}
-						</li>
-					</ul>
-				</div>
+				<ul class="nav" style="float: right;">
+					{{#if user}}
+						{{#with user}}
+							<li> 
+								<a href="/faq#q-karma">{{karma}} karma</a>
+							</li>
+						{{/with}}
+					{{/if}}
+					<li> 
+						{{loginButtons align="right"}}
+					</li>
+				</ul>
 				
 				<a class="brand" href="/">
 					<!-- m&#257;rq -->
@@ -29,12 +27,6 @@
 					<li><a href="/">Answer</a></li>
 					<li><a href="/profile">Results</a></li>
 				</ul>
-				
-				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</a>
 
 			</div>
 		</div>

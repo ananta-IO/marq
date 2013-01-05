@@ -88,6 +88,11 @@ Template.questionsNew.created = ->
 	Session.set "questionRemainingChars", (140 - questionLength)
 
 Template.questionsNew.rendered = ->
+	$(@find("#answer-choices .choices")).sortable
+		axis: 'y'
+		cursor: 'move'
+		update: (e, ui) =>
+			Session.set 'answerChoices', _.without(_.uniq(_.map(@findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
 	wait 1500, () =>
 		unless @find(".pick-image-widget")
 			filepicker.constructWidget(@find("#new-question-image"))
