@@ -116,7 +116,20 @@
 						</p>
 					{{/each}}
 				</div>
+			{{else}}
+				<div class="answer-choices">
+					{{#each answerChoices}}
+						<p>
+							<button class="btn btn-info btn-block btn-large answer" type="button" data-answer="{{this}}">
+								<!-- <span class="marq"><span class="inner"></span></span> -->
+								{{this}}
+							</button>
+						</p>
+					{{/each}}
+				</div>
+			{{/if}}
 
+			{{#if showMeta _id}}
 				<hr/>
 				<div class="row-fluid">
 					<div class="span12">
@@ -202,18 +215,6 @@
 						<button class="btn btn-primary post-comment" type="button">post</button>
 					</div>
 				</div> -->
-
-			{{else}}
-				<div class="answer-choices">
-					{{#each answerChoices}}
-						<p>
-							<button class="btn btn-info btn-block btn-large answer" type="button" data-answer="{{this}}">
-								<!-- <span class="marq"><span class="inner"></span></span> -->
-								{{this}}
-							</button>
-						</p>
-					{{/each}}
-				</div>
 			{{/if}}
 
 		{{else}}

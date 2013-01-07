@@ -190,15 +190,15 @@ Template.question.events
 			vote: vote
 		}, (error, question) ->
 			if error
-				# Session.set("questionAlert", {type: 'error', message: error.reason})
-				QuestionList.goToNextUnanswered()
+				Session.set("questionAlert", {type: 'error', message: error.reason})
+				# QuestionList.goToNextUnanswered()
 				analytics.track 'question rated error',
 					questionId: questionId
 					vote: vote
 					error: error
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
-				QuestionList.goToNextUnanswered()
+				# QuestionList.goToNextUnanswered()
 				analytics.track 'question rated success',
 					questionId: questionId
 					vote: vote
@@ -233,6 +233,9 @@ Template.question.alert = ->
 
 Template.question.currentUserHasAnswered = (questionId) ->
 	currentUserHasAnswered(questionId)
+
+Template.question.showMeta = (questionId) ->
+	not Meteor.userId() or currentUserHasAnswered(questionId)
 
 Template.question.voted = (questionId) ->
 	Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})?
@@ -275,7 +278,7 @@ Template.question.rendered = ->
 	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options
 
-	if currentUserHasAnswered(QuestionList.currentId())
+	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph
 		dataSet = []
 		_.map QuestionList.currentQuestion().answersTally, (value, key) ->
