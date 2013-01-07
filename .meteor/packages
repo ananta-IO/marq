@@ -14,3 +14,6 @@ router
 moment
 spiderable
 bootstrap
+accounts-password
+accounts-google
+accounts-ui

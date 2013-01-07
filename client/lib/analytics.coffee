@@ -24,21 +24,22 @@ analyticsRequest = ->
 
         Meteor.autorun ->
             user = Meteor.user()
-            if user and user.profile and user.profile.facebook and user.answerQuestionCount and user.askQuestionCount     
+            if user and user.profile and (user.profile.facebook or user.profile.google or user.profile.email) and user.answerQuestionCount and user.askQuestionCount     
                 analytics.identify user._id,
-                    name: user.profile.name
-                    email: user.profile.facebook.email
-                    username: user.profile.facebook.username
-                    gender: user.profile.facebook.gender
-                    birthday: user.profile.facebook.birthday
-                    locale: user.profile.facebook.locale
-                    timezone: user.profile.facebook.timezone
-                    bio: user.profile.facebook.bio
-                    quotes: user.profile.facebook.quotes
-                    education: user.profile.facebook.education
-                    work: user.profile.facebook.work
-                    inspirationalPeople: user.profile.facebook.inspirational_people
+                    name: getName(user)
+                    email: getEmail(user)
+                    username: getUsername(user)
+                    gender: getGender(user)
+                    birthday: getBirthday(user)
+                    locale: getLocale(user)
+                    timezone: getTimezone(user)
+                    bio: getBio(user)
+                    quotes: JSON.stringify(getQuotes(user))
+                    education: JSON.stringify(getEducation(user))
+                    work: JSON.stringify(getWork(user))
+                    inspirationalPeople: JSON.stringify(getInspirationalPeople(user))
                     createdAt: user.createdAt
                     karma: user.karma
                     answerQuestionCount: user.answerQuestionCount
                     askQuestionCount: user.askQuestionCount
+                    avatar: getAvatarUri(user)

@@ -22,12 +22,9 @@ Meteor.publish 'allUsers', ->
 			notifications: false
 			'profile.email': false
 			'profile.facebook': false
-			'services.twitter.accessToken': false
-			'services.twitter.accessTokenSecret': false
-			'services.twitter.id': false
-			'services.facebook.accessToken': false
-			'services.facebook.accessTokenSecret': false
-			'services.facebook.id': false
+			'profile.google': false
+			'services.facebook': false
+			'services.google': false
 			'services.password': false
 		})
 

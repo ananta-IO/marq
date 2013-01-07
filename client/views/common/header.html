@@ -3,24 +3,12 @@
 		<div class="navbar-inner">
 			<div class="container">
 
-				<ul class="nav" style="float: right;">
-					{{#if user}}
-						{{#with user}}
-							<li> 
-								<a href="/faq#q-karma">{{karma}} karma</a>
-							</li>
-						{{/with}}
-					{{/if}}
-					<li> 
-						{{loginButtons align="right"}}
-					</li>
-				</ul>
+				{{> userNav}}
 				
 				<a class="brand" href="/">
 					<!-- m&#257;rq -->
 					marq
 				</a>
-
 
 				<ul class="nav">
 					<li><a href="/questions/new">Ask</a></li>
@@ -31,4 +19,46 @@
 			</div>
 		</div>
 	</div>
+</template>
+
+
+<template name="userNav">
+	<ul class="nav pull-right">
+		{{#if currentUser}}
+			{{> userLoggedIn}}
+		{{else}}
+			{{> userLoggedOut}}
+		{{/if}}
+	</ul>
+</template>
+
+
+<template name="userLoggedIn">
+	{{#if loggingIn}}
+		<li><a>Logging in...</a></li>
+	{{else}}
+		<li> 
+			<a href="/faq#q-karma">{{currentUser.karma}} karma</a>
+		</li>
+		<li>
+			<img class="img-rounded" style="height: 32px; margin-top: 4px;" src="{{getAvatarUri currentUser}}"/>
+		</li>
+		<li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				<i class="icon-caret-down"></i>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a>Account Settings</a></li>
+				<li class="divider"></li>
+				<li><a id="logout">Logout</a></li>
+			</ul>
+		</li>
+	{{/if}}
+</template>
+
+
+<template name="userLoggedOut">
+	<li> 
+		<a>{{loginButtons align="right"}}</a>
+	</li>
 </template>
