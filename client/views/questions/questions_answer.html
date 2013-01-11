@@ -43,24 +43,31 @@
 			{{/if}}
 		</div>
 
-		<div class="row-fluid">
-			<div class="span12">
-				<ul class="pager">
-					<li class="previous {{#if previousQuestion}} {{else}}disabled{{/if}}">
-						<a href="#" class="previous-unanswered-question"><i class="icon-double-angle-left"></i></a>
-					</li>
-					<li class="previous visible-phone {{#if previousQuestion}} {{else}}disabled{{/if}}">
-						<a href="#" class="previous-question">previous</a>
-					</li>
-					<li class="next {{#if nextQuestion}} {{else}}disabled{{/if}}">
-						<a href="#" class="next-unanswered-question pull-right"><i class="icon-double-angle-right"></i></a>
-					</li>
-					<li class="next visible-phone {{#if nextQuestion}} {{else}}disabled{{/if}}">
-						<a href="#" class="next-question">next</a>
-					</li>
-				</ul>
+		{{#isolate}}
+			<div class="row-fluid">
+				<div class="span12">
+					<ul class="pager">
+						<li class="previous {{#if previousQuestion}} {{else}}disabled{{/if}}">
+							<a href="#" class="previous-unanswered-question"><i class="icon-double-angle-left"></i></a>
+						</li>
+						<li class="previous visible-phone {{#if previousQuestion}} {{else}}disabled{{/if}}">
+							<a href="#" class="previous-question">previous</a>
+						</li>
+						<li class="next {{#if nextQuestion}} {{else}}disabled{{/if}}">
+							<a href="#" class="next-unanswered-question pull-right {{#if voted question._id}}animated shake{{/if}}">
+								{{#if voted question._id}}
+									next question
+								{{/if}}
+								<i class="icon-double-angle-right"></i>
+							</a>
+						</li>
+						<li class="next visible-phone {{#if nextQuestion}} {{else}}disabled{{/if}}">
+							<a href="#" class="next-question">next</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-		</div>
+		{{/isolate}}
 
 	</div>
 </template>

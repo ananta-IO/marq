@@ -6,6 +6,7 @@ Template.questionsAnswer.events
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		QuestionList.goForward({skip: true})
+		scrollToTop()
 		analytics.track 'question next click',
 			questionId: QuestionList.currentId()
 
@@ -14,6 +15,7 @@ Template.questionsAnswer.events
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		QuestionList.goToNextUnanswered()
+		scrollToTop()
 		analytics.track 'question next unanswered click',
 			questionId: QuestionList.currentId()
 
@@ -22,6 +24,7 @@ Template.questionsAnswer.events
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		QuestionList.goBack()
+		scrollToTop()
 		analytics.track 'question previous click',
 			questionId: QuestionList.currentId()
 
@@ -30,12 +33,16 @@ Template.questionsAnswer.events
 		event.preventDefault()
 		Session.set("questionAlert", null)
 		QuestionList.goToPreviousUnanswered()
+		scrollToTop()
 		analytics.track 'question previous unanswered click',
 			questionId: QuestionList.currentId()
 
 # Current/Primary Question
 Template.questionsAnswer.question = ->
 	QuestionList.currentQuestion()
+
+Template.questionsAnswer.voted = (questionId) ->
+	Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})?
 
 # Previous Question
 Template.questionsAnswer.previousQuestion = ->
@@ -52,21 +59,25 @@ Template.questionsAnswer.rendered = ->
 	Mousetrap.bind 'right', () ->
 		Session.set("questionAlert", null)
 		QuestionList.goForward({skip: true})
+		scrollToTop()
 		analytics.track 'question next keyboard',
 			questionId: QuestionList.currentId()
 	Mousetrap.bind 'left', () ->
 		Session.set("questionAlert", null)
 		QuestionList.goBack()
+		scrollToTop()
 		analytics.track 'question previous keyboard',
 			questionId: QuestionList.currentId()
 	Mousetrap.bind 'shift+right', () ->
 		Session.set("questionAlert", null)
 		QuestionList.goToNextUnanswered()
+		scrollToTop()
 		analytics.track 'question next unanswered keyboard',
 			questionId: QuestionList.currentId()
 	Mousetrap.bind 'shift+left', () ->
 		Session.set("questionAlert", null)
 		QuestionList.goToPreviousUnanswered()
+		scrollToTop()
 		analytics.track 'question previous unanswered keyboard',
 			questionId: QuestionList.currentId()
 
@@ -173,6 +184,7 @@ Template.question.events
 					error: error
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your response. Please rate this question.', dismiss: true})
+				$.scrollTo('.answer-choices', 400)
 				analytics.track 'question answered success',
 					questionId: questionId
 					answer: answer
@@ -199,6 +211,7 @@ Template.question.events
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
 				# QuestionList.goToNextUnanswered()
+				$.scrollTo('.question-rate', 400)
 				analytics.track 'question rated success',
 					questionId: questionId
 					vote: vote
