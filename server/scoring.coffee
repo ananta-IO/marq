@@ -19,7 +19,7 @@ updateScore = (collection, id) ->
 
 
 Meteor.startup ->
-	scoreInterval = 30 # getSetting("scoreUpdateInterval") or 30
+	scoreInterval = parseInt(getSetting("scoreUpdateInterval") or 30)
 	
 	# recalculate scores every N seconds
 	if scoreInterval > 0

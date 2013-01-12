@@ -22,6 +22,33 @@
 				{{/isolate}}
 
 				<br/>
+				{{#isolate}}
+					<div class="row-fluid">
+						<div class="span12">
+							<label for="new-question-embed-uri">Embed Anything (optional)</label>
+							<div class="input string">
+								<input type="text" class="embed-uri span12 press-enter" id="new-question-embed-uri" placeholder="http://youtu.be/4HHJv8lPERQ?t=1m14s" maxlength="140" name="embed-uri">{{embedUri}}</input>
+							</div>
+							<span class="help-block">
+								<small>
+									Copy and paste a link to any video, audio, image, website, tweet, rss, etc. It will appear below if it can be embeded. 
+								</small>
+							</span> 
+						</div>
+					</div>
+				{{/isolate}}
+
+				{{#isolate}}
+					{{#if embedHtml}}
+						<div class="row-fluid">
+							<div class="span12" id="embed-html">
+								{{{embedHtml}}}
+							</div>
+						</div>
+					{{/if}}
+				{{/isolate}}
+
+				<br/>
 				<div class="row-fluid">
 					<div class="span12">
 						{{#if resetFpWidget}}
@@ -35,7 +62,7 @@
 							{{/if}}
 							<span class="help-block">
 								<small>
-									It should relate directly to your question. 
+									Pick from pictures on your computer, the web, facebook, dropbox, etc.
 								</small>
 							</span>
 						</div>

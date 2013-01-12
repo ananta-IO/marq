@@ -78,3 +78,9 @@ Meteor.publish "allComments", ->
 
 Meteor.publish "myViews", ->
 	Views.find({ ownerId: @userId })
+
+
+# ** Embeds **
+
+Meteor.publish "myEmbeds", ->
+	Embeds.find({ ownerId: @userId })

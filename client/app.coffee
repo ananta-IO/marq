@@ -94,3 +94,8 @@ Meteor.subscribe('allComments')
 # ** Views **
 
 Meteor.subscribe('myViews')
+
+
+# ** Embeds **
+
+Meteor.subscribe('myEmbeds')

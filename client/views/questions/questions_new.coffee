@@ -5,35 +5,66 @@ Template.questionsNew.events
 
 		question = $.trim(template.find("textarea.question").value)
 		Session.set 'question', question
+		embedId = Session.get "new question embed id"
 		imageUri = Session.get "new question image uri"
 		answerChoices = _.without(_.uniq(_.map(template.findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
 		Session.set 'answerChoices', answerChoices
 		Meteor.call "createQuestion", {
 			question: question
+			embedId: embedId
 			imageUri: imageUri
 			answerChoices: answerChoices
-		}, (error, question) ->
+		}, (error, object) ->
 			if error
 				Session.set("questionsNewAlert", {type: 'error', message: error.reason})
 				analytics.track 'question asked error',
 					question: question
+					embedId: embedId
 					imageUri: imageUri
-					answerChoices: answerChoices
+					answerChoices: JSON.stringify(answerChoices)
 					error: error
 			else
 				Session.set("questionsNewAlert", {type: 'success', message: 'Question successfully asked. We will automatically show your question to randomly selected people. You can improve your results by sharing this with your friends.', dismiss: true})
 				Session.set("question", '')
 				Session.set("answerChoices", null)
+				Session.set "new question embed id", null
+				Session.set "new question embed uri", null
 				Session.set "new question image uri", null
 				Session.set "questionRemainingChars", (140 - $(event.target).val().length)
-				Session.set "resetFpWidget", (Math.random()*999999)
+				Session.set "resetFpWidget", (new Date())
 				analytics.track 'question asked success',
 					question: question
+					embedId: embedId
 					imageUri: imageUri
-					answerChoices: answerChoices
+					answerChoices: JSON.stringify(answerChoices)
 	
-	'change #new-question-image': (event) ->
-        Session.set "new question image uri", event.fpfile.url
+	"keyup #new-question-embed-uri": (event, template) ->
+		if (event.which == 13) then $('input.answer-choice').first().focus()
+
+	"paste #new-question-embed-uri, keyup #new-question-embed-uri, blur #new-question-embed-uri": (event, template) ->
+		if Meteor.user()
+			uri = $.trim(event.currentTarget.value)
+			if uri.length > 0 and uri != Session.get "new question embed uri"
+				embed = Meteor.call "createEmbed", {
+					uri: uri
+				}, (error, id) ->
+					if error
+						Session.set("questionsNewAlert", {type: 'error', message: error.reason})
+						Session.set "new question embed id", null
+						Session.set "new question embed uri", uri
+					else
+						Session.set "questionsNewAlert", null
+						Session.set "new question embed id", id
+						Session.set "new question embed uri", uri
+			else if uri.length == 0
+				Session.set "questionsNewAlert", null
+				Session.set "new question embed id", null
+				Session.set "new question embed uri", null
+		else
+			Session.set("questionsNewAlert", {type: 'error', message: "Log in to embed that"})
+	
+	"change #new-question-image": (event) ->
+		Session.set "new question image uri", event.fpfile.url
 
 	"click #preview-image .remove": (event, template) ->
 		event.preventDefault()
@@ -66,6 +97,13 @@ Template.questionsNew.isLoggedIn = ->
 Template.questionsNew.questionRemainingChars = ->
 	Session.get "questionRemainingChars"
 
+Template.questionsNew.embedHtml = ->
+	Session.get "new question embed uri"
+
+Template.questionsNew.embedHtml = ->
+	embed = Embeds.findOne(Session.get "new question embed id")
+	if embed then embed.html else null
+
 Template.questionsNew.resetFpWidget = ->
 	Session.get "resetFpWidget"
 
@@ -96,5 +134,11 @@ Template.questionsNew.rendered = ->
 	wait 1500, () =>
 		unless @find(".pick-image-widget")
 			filepicker.constructWidget(@find("#new-question-image"))
+		# Resize iframes
+		$(window).resize =>
+			$iframe = $(@find('iframe'))
+			width = $(@find('#embed-html')).innerWidth()
+			resizeIframe($iframe, width)
+		$(window).resize()
 
 

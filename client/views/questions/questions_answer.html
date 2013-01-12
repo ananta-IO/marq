@@ -38,7 +38,7 @@
 				</div>
 			{{else}}
 				<div class="span2 well hidden-phone">
-					<p><a href="/questions/new">Ask</a> and answer questions to see more.</p>
+					<p>Why don't you <a href="/questions/new">ask a question</a>.</p>
 				</div>
 			{{/if}}
 		</div>
@@ -53,14 +53,25 @@
 						<li class="previous visible-phone {{#if previousQuestion}} {{else}}disabled{{/if}}">
 							<a href="#" class="previous-question">previous</a>
 						</li>
-						<li class="next {{#if nextQuestion}} {{else}}disabled{{/if}}">
-							<a href="#" class="next-unanswered-question pull-right {{#if voted question._id}}animated shake{{/if}}">
-								{{#if voted question._id}}
-									next question
-								{{/if}}
-								<i class="icon-double-angle-right"></i>
-							</a>
-						</li>
+						{{#if nextQuestion}}
+							<li class="next">
+								<a href="#" class="next-unanswered-question pull-right {{#if voted question._id}}animated shake{{/if}}">
+									{{#if voted question._id}}
+										next question
+									{{/if}}
+									<i class="icon-double-angle-right"></i>
+								</a>
+							</li>
+						{{else}}
+							<li class="next">
+								<a href="/ask" class="{{#if voted question._id}}animated shake{{/if}}">
+									<i class="icon-pencil"></i>
+									{{#if voted question._id}}
+										ask a question
+									{{/if}}
+								</a>
+							</li>
+						{{/if}}
 						<li class="next visible-phone {{#if nextQuestion}} {{else}}disabled{{/if}}">
 							<a href="#" class="next-question">next</a>
 						</li>
@@ -87,6 +98,15 @@
 							<img src="{{imageUri}}" class="span12"></img>
 						</div>
 					</div>
+				{{/if}}
+				{{#if embedHtml}}
+					{{#constant}}
+						<div class="row-fluid">
+							<div class="span12" id="embed-html">
+								{{{embedHtml}}}
+							</div>
+						</div>
+					{{/constant}}
 				{{/if}}
 			</blockquote>
 

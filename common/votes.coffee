@@ -8,7 +8,7 @@ Votes = new Meteor.Collection("votes")
 
 Votes.allow
 	insert: (userId, vote) ->
-		false # no cowboy inserts -- use createvote method
+		false # no cowboy inserts -- use createVote method
 	
 	update: (userId, votes, fields, modifier) ->
 		false

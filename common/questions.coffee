@@ -2,6 +2,8 @@
 # Each question is represented by a document in the Questions collection:
 #   ownerId: String user id
 #   question: String
+#   embedId: String embed id
+#   embedHtml: String of embed iframe html
 #   imageUri: String
 #   answerChoices: Array of possible answers like ["yes", "no", "don't care"]
 #   answersTally: Object with the breakdown for each answer choice like {ansChoice0: 3, ansChoice1: 89, ansChoice3: 0}
@@ -16,26 +18,6 @@
 #   createdAt: new Date
 Questions = new Meteor.Collection("questions")
 
-Questions.allow
-	insert: (userId, question) ->
-		false # no cowboy inserts -- use createQuestion method
-	
-	update: (userId, questions, fields, modifier) ->
-		false
-		# _.all questions, (question) ->
-		#   return false  if userId isnt question.owner # not the owner
-		#   allowed = ["question", "answerChoices"]
-		#   return false  if _.difference(fields, allowed).length # tried to write to forbidden field
-			
-		#   # A good improvement would be to validate the type of the new
-		#   # value of the field (and if a string, the length.) In the
-		#   # future Meteor will have a schema system to makes that easier.
-		#   true
-
-	remove: (userId, questions) ->
-		not _.any(questions, (question) ->
-			!canRemoveQuestion(userId, question)
-		)
 
 objectifyAnswerChoices = (answerChoices) ->
 	_.map(answerChoices, (ac, i) -> {order: i+1, placeholder: ac, value: ac})
@@ -70,8 +52,31 @@ answeredQuestionIds = () ->
 	else
 		[]
 
+
+Questions.allow
+	insert: (userId, question) ->
+		false # no cowboy inserts -- use createQuestion method
+	
+	update: (userId, questions, fields, modifier) ->
+		false
+		# _.all questions, (question) ->
+		#   return false  if userId isnt question.owner # not the owner
+		#   allowed = ["question", "answerChoices"]
+		#   return false  if _.difference(fields, allowed).length # tried to write to forbidden field
+			
+		#   # A good improvement would be to validate the type of the new
+		#   # value of the field (and if a string, the length.) In the
+		#   # future Meteor will have a schema system to makes that easier.
+		#   true
+
+	remove: (userId, questions) ->
+		not _.any(questions, (question) ->
+			!canRemoveQuestion(userId, question)
+		)
+
+
 Meteor.methods
-	# options should include: question, imageUri, answerChoices
+	# options should include: question, embedId, imageUri, answerChoices
 	createQuestion: (options) ->
 		options = options or {}
 		options.imageUri or= null
@@ -84,6 +89,7 @@ Meteor.methods
 		throw new Meteor.Error(413, "At least one answer choice is too long (90 characters max)")  if options.answerChoices and _.contains(_.map(options.answerChoices, (ac) -> ac.length > 90 ), true)
 		throw new Meteor.Error(400, "You have already asked this question")  if Questions.findOne({ ownerId: @userId, question: options.question })
 		
+		embedHtml = if options.embedId and (embed = Embeds.findOne(options.embedId)) then embed.html else null
 		answerChoices = if options.answerChoices and options.answerChoices.length > 0 then options.answerChoices else ["yes", "no", "don't care"]
 		answersTally = {}
 		_.each answerChoices, (ac) ->
@@ -92,6 +98,8 @@ Meteor.methods
 		Questions.insert
 			ownerId: @userId
 			question: options.question
+			embedId: options.embedId
+			embedHtml: embedHtml
 			imageUri: options.imageUri
 			answerChoices: answerChoices
 			answersTally: answersTally

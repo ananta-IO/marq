@@ -211,7 +211,7 @@ Template.question.events
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
 				# QuestionList.goToNextUnanswered()
-				$.scrollTo('.question-rate', 400)
+				$.scrollTo('.comments', 400)
 				analytics.track 'question rated success',
 					questionId: questionId
 					vote: vote
@@ -290,6 +290,13 @@ Template.question.rendered = ->
 	# Track view
 	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options
+
+	wait 1500, =>
+		$(window).resize =>
+			$iframe = $(@find('iframe'))
+			width = $(@find('#embed-html')).innerWidth()
+			resizeIframe($iframe, width)
+		$(window).resize()
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph

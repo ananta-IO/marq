@@ -1,10 +1,13 @@
 Setting = FormModel.extend(
 	blankSchema:
-		segmentIoId: 'g2x35t4' 
+		segmentIoId: 'g2x35t4'
+		embedlyKey: ''
+		scoreUpdateInterval: 30
 
 	init: (options) ->
 		@_super Settings, options
 		@overwriteTitle "segmentIoId", "Segment.io ID"
+		@overwriteTitle "scoreUpdateInterval", "Score Update Interval in Seconds"
 )
 
 # Setting = FormModel.extend(
