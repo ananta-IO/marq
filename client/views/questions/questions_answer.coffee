@@ -291,12 +291,11 @@ Template.question.rendered = ->
 	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options
 
-	wait 1500, =>
-		$(window).resize =>
-			$iframe = $(@find('iframe'))
-			width = $(@find('#embed-html')).innerWidth()
-			resizeIframe($iframe, width)
-		$(window).resize()
+	$(window).resize =>
+		$iframe = $(@find('iframe'))
+		width = $(@find('#embed-html')).innerWidth()
+		resizeIframe($iframe, width)
+	$(window).resize()
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph
