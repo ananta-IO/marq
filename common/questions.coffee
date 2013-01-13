@@ -58,7 +58,7 @@ Questions.allow
 		false # no cowboy inserts -- use createQuestion method
 	
 	update: (userId, questions, fields, modifier) ->
-		false
+		isAdminById(userId)
 		# _.all questions, (question) ->
 		#   return false  if userId isnt question.owner # not the owner
 		#   allowed = ["question", "answerChoices"]
@@ -70,9 +70,12 @@ Questions.allow
 		#   true
 
 	remove: (userId, questions) ->
-		not _.any(questions, (question) ->
-			!canRemoveQuestion(userId, question)
-		)
+		if isAdminById(userId)
+			true
+		else
+			not _.any(questions, (question) ->
+				!canRemoveQuestion(userId, question)
+			)
 
 
 Meteor.methods
