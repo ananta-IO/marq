@@ -85,8 +85,8 @@
 
 
 <template name="question">
-	<div id="question-{{_id}}" class="question">
-		{{#if this}}
+	{{#if this}}
+		<div id="question-{{_id}}" class="question">
 
 			<blockquote>
 				<p class="lead">
@@ -244,8 +244,8 @@
 				</div> -->
 			{{/if}}
 
-		{{else}}
-			{{> loading}}
-		{{/if}}
-	</div>
+		</div>
+	{{else}}
+		{{> loading}}
+	{{/if}}
 </template>

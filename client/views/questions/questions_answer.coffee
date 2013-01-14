@@ -241,56 +241,65 @@ Template.question.events
 						questionId: questionId
 						comment: comment
 
-Template.question.alert = ->
-	Session.get "questionAlert"
+Template.question.helpers
+	alert: ->
+		Session.get "questionAlert"
 
-Template.question.currentUserHasAnswered = (questionId) ->
-	currentUserHasAnswered(questionId)
+	currentUserHasAnswered: (questionId) ->
+		currentUserHasAnswered(questionId)
 
-Template.question.showMeta = (questionId) ->
-	not Meteor.userId() or currentUserHasAnswered(questionId)
+	showMeta: (questionId) ->
+		not Meteor.userId() or currentUserHasAnswered(questionId)
 
-Template.question.voted = (questionId) ->
-	Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})?
+	voted: (questionId) ->
+		Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})?
 
-Template.question.vote = (questionId) ->
-	vote = Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})
-	if vote
-		if vote.vote == 1
-			'it is'
+	vote: (questionId) ->
+		vote = Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})
+		if vote
+			if vote.vote == 1
+				'it is'
+			else
+				'it is not'
 		else
-			'it is not'
-	else
-		'you have not rated this yet'
+			'you have not rated this yet'
 
-# TODO: make this take the quesitonId insead of assuming currentId()
-Template.question.isUsersAnswer = (answer) ->
-	ans = Answers.findOne({ ownerId: Meteor.userId(), questionId: QuestionList.currentId() })
-	ans? and ans.answer == answer
+	# TODO: make this take the quesitonId insead of assuming currentId()
+	isUsersAnswer: (answer) ->
+		ans = Answers.findOne({ ownerId: Meteor.userId(), questionId: QuestionList.currentId() })
+		ans? and ans.answer == answer
 
-# TODO: make this take the quesitonId insead of assuming currentId()
-Template.question.anyComments = ->
-	Comments.find(
-		{ questionId: QuestionList.currentId() }
-		{ sort: { createdAt: 1 } }
-	).count() > 0
+	# TODO: make this take the quesitonId insead of assuming currentId()
+	anyComments: ->
+		Comments.find(
+			{ questionId: QuestionList.currentId() }
+			{ sort: { createdAt: 1 } }
+		).count() > 0
 
-# TODO: make this take the quesitonId insead of assuming currentId()
-Template.question.comments = ->
-	Comments.find(
-		{ questionId: QuestionList.currentId() }
-		{ sort: { createdAt: 1 } }
-	)
+	# TODO: make this take the quesitonId insead of assuming currentId()
+	comments: ->
+		Comments.find(
+			{ questionId: QuestionList.currentId() }
+			{ sort: { createdAt: 1 } }
+		)
 
-Template.question.isCurrentUsersComment = (ownerId) ->
-	ownerId == Meteor.userId()
+	isCurrentUsersComment: (ownerId) ->
+		ownerId == Meteor.userId()
+
+Template.question.created = ->
+	question = QuestionList.currentQuestion()
+	if question
+		analytics.track 'question viewed',
+			questionId: question._id
+			question: question.question
+			answerChoices: question.answerChoices
 
 # TODO: make this take the quesitonId insead of assuming currentQuestion()
 Template.question.rendered = ->
 	# Track view
 	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options
-
+   
 	$(window).resize =>
 		$iframe = $(@find('iframe'))
 		width = $(@find('#embed-html')).innerWidth()
@@ -308,10 +317,3 @@ Template.question.rendered = ->
 		div = @find(".past-comments")
 		div.scrollTop = div.scrollHeight
 
-Template.question.created = ->
-	question = QuestionList.currentQuestion()
-	if question
-		analytics.track 'question viewed',
-			questionId: question._id
-			question: question.question
-			answerChoices: question.answerChoices
