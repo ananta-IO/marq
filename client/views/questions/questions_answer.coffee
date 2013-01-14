@@ -301,12 +301,13 @@ Template.question.rendered = ->
 	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options
 
-	# # TODO: make sure the template is loaded
-	# $(window).resize =>
-	#	$iframe = $(@find('iframe'))
-	#	width = $(@find('#embed-html')).innerWidth()
-	#	resizeIframe($iframe, width)
-	# $(window).resize()
+	# TODO: make sure the template is loaded
+	wait 1500, () =>
+		$(window).resize =>
+			$iframe = $('#embed-html iframe')
+			width = $('#embed-html').innerWidth()
+			resizeIframe($iframe, width)
+		$(window).resize()
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph
@@ -316,6 +317,6 @@ Template.question.rendered = ->
 		drawPie("questionsAnswerPie", dataSet, "#question-#{QuestionList.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
 
 		# Treat comments like a chat
-		div = @find(".past-comments")
-		div.scrollTop = div.scrollHeight
+		$pastComments = $(".past-comments")
+		$pastComments.scrollTo($pastComments.find(".comment").last())
 
