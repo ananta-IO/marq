@@ -1,14 +1,18 @@
-Template.footer.year = ->
-	new Date().getFullYear()
+Template.footer.helpers
+	year: ->
+		new Date().getFullYear()
 
 Template.footer.rendered = ->
-	initAddThis()
+	unless window.addthis
+		initAddThis()
+	else
+		addthis.toolbox(@find(".addthis_toolbox"))
 
-	buttons = $(@find("#footer .addthis_toolbox")).children()
+	buttons = $(@find("#footer .addthis_toolbox")).children("a")
 	pre = 99
 	cur = 0
 	hover = false
-	time = 3000
+	time = 2000
 	$(buttons).fadeTo(0, 0.4);
 	$(buttons).hide()
 	transitionButtons = () =>

@@ -134,11 +134,11 @@ Template.questionsNew.rendered = ->
 	wait 1500, () =>
 		unless @find(".pick-image-widget")
 			filepicker.constructWidget(@find("#new-question-image"))
-	# Resize iframes
-	$(window).resize =>
-		$iframe = $(@find('iframe'))
-		width = $(@find('#embed-html')).innerWidth()
-		resizeIframe($iframe, width)
-	$(window).resize()
+	# # Resize iframes
+	# $(window).resize =>
+	#	$iframe = $(@find('iframe'))
+	#	width = $(@find('#embed-html')).innerWidth()
+	#	resizeIframe($iframe, width)
+	# $(window).resize()
 
 

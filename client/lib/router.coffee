@@ -42,6 +42,11 @@
 
 			# log this request with mixpanel, etc
 			analyticsRequest()
+			if analytics.track
+				# console.log "track"
+				# console.log window.location.href
+				analytics.track "page viewed",
+					href: window.location.href
 )()
 
 

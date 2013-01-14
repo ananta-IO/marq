@@ -90,6 +90,7 @@
 
 			<blockquote>
 				<p class="lead">
+					{{score}}
 					{{question}}
 				<p/>
 				{{#if imageUri}}
@@ -101,11 +102,13 @@
 				{{/if}}
 				{{#if embedHtml}}
 					{{#isolate}}
+						{{#constant}}
 						<div class="row-fluid">
 							<div class="span12" id="embed-html">
 								{{{embedHtml}}}
 							</div>
 						</div>
+						{{/constant}}
 					{{/isolate}}
 				{{/if}}
 			</blockquote>

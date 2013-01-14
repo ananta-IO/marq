@@ -37,20 +37,21 @@ Template.questionsAnswer.events
 		analytics.track 'question previous unanswered click',
 			questionId: QuestionList.currentId()
 
-# Current/Primary Question
-Template.questionsAnswer.question = ->
-	QuestionList.currentQuestion()
+Template.questionsAnswer.helpers
+	# Current/Primary Question
+	question: ->
+		QuestionList.currentQuestion()
 
-Template.questionsAnswer.voted = (questionId) ->
-	Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})?
+	voted: (questionId) ->
+		Votes.findOne({ownerId: Meteor.userId(), questionId: questionId})?
 
-# Previous Question
-Template.questionsAnswer.previousQuestion = ->
-	QuestionList.previousQuestion()
+	# Previous Question
+	previousQuestion: ->
+		QuestionList.previousQuestion()
 
-# Next Question
-Template.questionsAnswer.nextQuestion = ->
-	QuestionList.nextQuestion()
+	# Next Question
+	nextQuestion: ->
+		QuestionList.nextQuestion()
 
 # Render
 Template.questionsAnswer.rendered = ->
@@ -94,7 +95,7 @@ Template.questionsAnswer.created = ->
 			QuestionList.namespace = "questionsAnswer"
 			QuestionList.initialize()
 
-# Helper class to manage the flipbook of answerable questions indexed in the session and presented to the current user
+# Helper class to manage the currently active questions in the session
 class QuestionList
 
 	@namespace: 'default'
@@ -299,12 +300,13 @@ Template.question.rendered = ->
 	# Track view
 	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options
-   
-	$(window).resize =>
-		$iframe = $(@find('iframe'))
-		width = $(@find('#embed-html')).innerWidth()
-		resizeIframe($iframe, width)
-	$(window).resize()
+
+	# # TODO: make sure the template is loaded
+	# $(window).resize =>
+	#	$iframe = $(@find('iframe'))
+	#	width = $(@find('#embed-html')).innerWidth()
+	#	resizeIframe($iframe, width)
+	# $(window).resize()
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph
