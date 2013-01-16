@@ -14,11 +14,14 @@
 		"/ask": "questionsNew"
 		"/faq": "faq"
 		"/results": "questionsIndex"
+		"/privacy": "privacy"
 		"/profile": "questionsIndex"
 		"/questions": "questionsIndex"
 		"/questions/answer": "questionsAnswer"
 		"/questions/new": "questionsNew"
 		"/settings": "settings"
+		"/tos": "tos"
+		"*": "404"
 
 
 	Meteor.Router.filters

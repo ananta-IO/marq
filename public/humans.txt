@@ -1,0 +1,22 @@
+/* TEAM */
+	Startist: Christopher Smothers 
+	Contact: chris [at] marq.io
+	Twitter: @soupcellar
+	From: NYC, US
+
+
+/* THANKS */
+	(Primary) Contributor: The Open Source Comunity
+	From: Allover
+
+	Terms of Service: Wordpress
+	Site: http://en.wordpress.com/tos/
+		
+
+/* SITE */
+	Last update: 2012/02/04
+	Language: English
+	Doctype: HTML5
+	Stack: Meteor, jQuery, Bootstrap, Underscore
+	Languages: Coffeescript, Stylus, HTML
+	IDE: Sublime Text
