@@ -34,7 +34,7 @@ svg
 .no-wrap
 	white-space: nowrap
 
-input.press-enter
+input.press-enter, textarea.press-enter
 	background: url("/assets/return-symbol.jpg") 98% center no-repeat
 	background-color: white
 	padding-right: 38px
@@ -50,7 +50,7 @@ input.press-enter
 //////////////////////////////////////////////
 /// Explicit Elememt Style
 .navbar-inner
-	background-image: none
+	// background-image: none
 
 #loading
 	margin: 60px 0
@@ -118,11 +118,19 @@ input.press-enter
 	margin-top: 20px
 	.flip
 		position: relative
-		opacity: 0.4
+		opacity: 0.2
 		height: 108px
 		&:hover
 			opacity: 1
 			cursor: pointer
+		// &.next-question
+		//	p
+		//		left: 0
+		// &.previous-question
+		//	p
+		//		right: 0
+		.affix
+			// top: 60px
 		p
 			position: absolute
 			left: 0

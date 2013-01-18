@@ -50,6 +50,8 @@
 				# console.log window.location.href
 				analytics.track "page viewed",
 					href: window.location.href
+
+			scrollToTop(0)
 )()
 
 

@@ -12,8 +12,7 @@
 
 				<ul class="nav">
 					<li><a href="/questions/new">Ask</a></li>
-					<li><a href="/">Answer</a></li>
-					<li><a href="/profile">Results</a></li>
+					<li class="hidden-phone"><a href="/">Answer</a></li>
 				</ul>
 
 			</div>
@@ -48,9 +47,9 @@
 				<i class="icon-caret-down"></i>
 			</a>
 			<ul class="dropdown-menu">
-				<!-- <li><a>Account Settings</a></li>
-				<li class="divider"></li> -->
-				<li><a id="logout">Logout</a></li>
+				<li><a href="/profile"><i class="icon-bar-chart"></i>&nbsp;&nbsp;Results</a></li>
+				<li class="divider"></li>
+				<li><a id="logout"><i class="icon-signout"></i>&nbsp;&nbsp;Logout</a></li>
 			</ul>
 		</li>
 	{{/if}}

@@ -82,7 +82,6 @@ Template.questionsAnswer.rendered = ->
 		analytics.track 'question previous unanswered keyboard',
 			questionId: QuestionList.currentId()
 
-	$('.flip').css 'height', $('.main-answer-view').outerHeight()
 	wait 2000, =>
 		$('.flip').css 'height', $('.main-answer-view').outerHeight()
 
@@ -218,13 +217,13 @@ Template.question.events
 					vote: vote
 
 	# comment
-	"keyup input.new-comment": (event, template) ->
-		if (event.which == 13)
+	"keypress textarea.new-comment": (event, template) ->
+		if (event.which == 13 and !event.shiftKey)
 			event.preventDefault()
 			Session.set("questionAlert", null)
 			# TODO: fetch id from template, put it in a hidden form field
 			questionId = QuestionList.currentId()
-			comment = template.find("input.new-comment").value
+			comment = template.find("textarea.new-comment").value
 			Meteor.call "commentOnQuestion", {
 				questionId: questionId
 				comment: comment
@@ -237,7 +236,7 @@ Template.question.events
 						error: error
 				else
 					Session.set("questionAlert", null)
-					template.find("input.new-comment").value = null
+					template.find("textarea.new-comment").value = null
 					analytics.track 'question commented success',
 						questionId: questionId
 						comment: comment
@@ -308,6 +307,7 @@ Template.question.rendered = ->
 			width = $('#embed-html').innerWidth()
 			resizeIframe($iframe, width)
 		$(window).resize()
+		$("textarea.new-comment").autosize()
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph
