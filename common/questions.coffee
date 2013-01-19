@@ -84,7 +84,7 @@ Meteor.methods
 		options = options or {}
 		options.imageUri or= null
 		
-		throw new Meteor.Error(403, "Log in to ask a question")  unless @userId
+		throw new Meteor.Error(403, "Sign in to ask a question")  unless @userId
 		throw new Meteor.Error(400, "Question can't be blank")  unless typeof options.question is "string" and options.question.length
 		throw new Meteor.Error(413, "Question is too long (140 characters max)")  if options.question and options.question.length > 140
 		throw new Meteor.Error(413, "Add at least one more response choice")  if options.answerChoices and options.answerChoices.length > 0 and options.answerChoices.length < 2
@@ -145,7 +145,7 @@ Meteor.methods
 	skipQuestion: (options) ->
 		options = options or {}
 
-		throw new Meteor.Error(403, "Log in to skip this question")  unless Meteor.userId()
+		throw new Meteor.Error(403, "Sign in to skip this question")  unless Meteor.userId()
 		question = Questions.findOne(options.questionId)
 		throw new Meteor.Error(404, "No such question")  unless question
 

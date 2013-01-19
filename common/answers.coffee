@@ -22,7 +22,7 @@ Meteor.methods
 	createAnswer: (options) ->
 		options = options or {}
 		
-		throw new Meteor.Error(403, "Log in to answer this question")  unless @userId
+		throw new Meteor.Error(403, "Sign in to answer this question")  unless @userId
 		question = Questions.findOne(options.questionId)
 		throw new Meteor.Error(404, "No such question")  unless question
 		throw new Meteor.Error(400, "You have already answered this question")  if _.contains(Meteor.user().answeredQuestionIds, options.questionId)

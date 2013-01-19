@@ -59,7 +59,7 @@ Open browser to server on port [3000](http://localhost:3000)
 
 Click "configure facebook credentials" and follow the instructions to setup and configure a facebook app for development
 
-Log in to your brand new marq
+Sign in to your brand new marq
 
 Hack and submit pull requests.
 

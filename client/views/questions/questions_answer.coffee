@@ -82,8 +82,10 @@ Template.questionsAnswer.rendered = ->
 		analytics.track 'question previous unanswered keyboard',
 			questionId: QuestionList.currentId()
 
-	wait 2000, =>
-		$('.flip').css 'height', $('.main-answer-view').outerHeight()
+	$flip = $('.flip')
+	$answerView = $('.main-answer-view')
+	if $flip and $answerView
+		$flip.css 'height', $answerView.outerHeight()
 
 	QuestionList.addQuestionsIfLow()
 
@@ -182,6 +184,7 @@ Template.question.events
 					questionId: questionId
 					answer: answer
 					error: error
+				Accounts._loginButtonsSession.set('dropdownVisible', true) unless Meteor.user()
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your response. Please rate this question.', dismiss: true})
 				$.scrollTo('.answer-choices', 400)
@@ -208,6 +211,7 @@ Template.question.events
 					questionId: questionId
 					vote: vote
 					error: error
+				Accounts._loginButtonsSession.set('dropdownVisible', true) unless Meteor.user()
 			else
 				# Session.set("questionAlert", {type: 'success', message: 'Thanks for your feedback. Please respond to another question.', dismiss: true})
 				# QuestionList.goToNextUnanswered()
@@ -234,6 +238,7 @@ Template.question.events
 						questionId: questionId
 						comment: comment
 						error: error
+					Accounts._loginButtonsSession.set('dropdownVisible', true) unless Meteor.user()
 				else
 					Session.set("questionAlert", null)
 					template.find("textarea.new-comment").value = null

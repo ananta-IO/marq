@@ -3,7 +3,9 @@ getSetting = (setting) ->
 	if settings then settings[setting] else ''
 
 scrollToTop = (speed = 400) ->
-	$("html, body").animate({ scrollTop: 0 }, speed)
+	$selector = $("html, body")
+	if $selector
+		$selector.animate({ scrollTop: 0 }, speed)
 
 resizeIframe = ($iframe, newWidth) ->
 	width = $iframe.attr('width')

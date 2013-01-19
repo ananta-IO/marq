@@ -51,23 +51,35 @@ input.press-enter, textarea.press-enter
 /// Explicit Elememt Style
 .navbar-inner
 	// background-image: none
+	.dropdown-menu
+		i
+			line-height: 20px
 
 #loading
 	margin: 60px 0
 
 #intro
-	.login-button
-		float: right
-		&#login-buttons-facebook
-			color: #3b5998
-			border: 1px solid #3b5998
-			border-radius: 3px
-			padding: 4px 10px 6px
-			&:hover
-				// text-decoration: underline
-				cursor: pointer
-				background: #3b5998
-				color: white
+	.alert-block
+		position: relative
+		a.join
+			@media (max-width: 567px)
+				margin-top: 10px;
+			@media (min-width: 568px)
+				position: absolute
+				bottom: 10px
+				right: 10px
+	// .login-button
+	//	float: right
+	//	&#login-buttons-facebook
+	//		color: #3b5998
+	//		border: 1px solid #3b5998
+	//		border-radius: 3px
+	//		padding: 4px 10px 6px
+	//		&:hover
+	//			// text-decoration: underline
+	//			cursor: pointer
+	//			background: #3b5998
+	//			color: white
 	.tooltip-inner
 		max-width: 300px
 

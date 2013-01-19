@@ -5,6 +5,10 @@
 
 	{{> header}}
 
+	{{#unless currentUser}}
+		{{> intro}}
+	{{/unless}}
+
 	{{{renderPage}}}
 
 	{{> footer}}

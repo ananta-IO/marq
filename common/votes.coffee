@@ -22,7 +22,7 @@ Meteor.methods
 	createVote: (options) ->
 		options = options or {}
 
-		throw new Meteor.Error(403, "Log in to rate this question")  unless @userId
+		throw new Meteor.Error(403, "Sign in to rate this question")  unless @userId
 		question = Questions.findOne(options.questionId)
 		throw new Meteor.Error(404, "No such question")  unless question
 		vote = Votes.findOne({ownerId: @userId, questionId: options.questionId})

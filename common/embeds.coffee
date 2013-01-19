@@ -25,7 +25,7 @@ Meteor.methods
 		options = options or {}
 		data = {}
 
-		throw new Meteor.Error(403, "Log in to embed this link")  unless @userId
+		throw new Meteor.Error(403, "Sign in to embed this link")  unless @userId
 		
 		if Meteor.isServer
 			result = Meteor.http.get "http://api.embed.ly/1/oembed",

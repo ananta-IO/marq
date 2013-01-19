@@ -23,6 +23,7 @@ Template.questionsNew.events
 					imageUri: imageUri
 					answerChoices: JSON.stringify(answerChoices)
 					error: error
+				Accounts._loginButtonsSession.set('dropdownVisible', true) unless Meteor.user()
 			else
 				Session.set("questionsNewAlert", {type: 'success', message: 'Question successfully asked. We will automatically show your question to randomly selected people. You can improve your results by sharing this with your friends.', dismiss: true})
 				Session.set("question", '')
@@ -61,7 +62,8 @@ Template.questionsNew.events
 				Session.set "new question embed id", null
 				Session.set "new question embed uri", null
 		else
-			Session.set("questionsNewAlert", {type: 'error', message: "Log in to embed that"})
+			Session.set("questionsNewAlert", {type: 'error', message: "Sign in to embed that"})
+			Accounts._loginButtonsSession.set('dropdownVisible', true)
 	
 	"change #new-question-image": (event) ->
 		Session.set "new question image uri", event.fpfile.url
