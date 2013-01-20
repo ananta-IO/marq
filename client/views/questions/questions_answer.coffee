@@ -90,18 +90,21 @@ Template.questionsAnswer.rendered = ->
 	QuestionList.addQuestionsIfLow()
 
 # Created
-Template.questionsAnswer.created = ->
-	Meteor.startup ->
-		Meteor.autorun ->
-			QuestionList.namespace = "questionsAnswer"
-			QuestionList.initialize()
+# Template.questionsAnswer.created = ->
+#	Meteor.startup ->
+#		Meteor.autorun ->
+#			QuestionList.namespace = "questionsAnswer"
+#			QuestionList.initialize()
 
+
+# TODO: REFACTOR: move this class elsewhere
 # Helper class to manage the currently active questions in the session
 class QuestionList
 
 	@namespace: 'default'
 
 	@initialize: (questionId = null) ->
+		# Load all answered and a few unanswered question ids
 		if _.isEmpty(@questionIds())
 			ids = answeredQuestionIds() or []
 			index = ids.length
@@ -109,18 +112,24 @@ class QuestionList
 			@findAndAppendMoreQuestions()
 			if index > 0 then @questionIndex(index - 1) else @questionIndex(0)
 			if @nextId()? then @questionIndex(index)
-			console.log @questionIds()
+			console.log 2, @questionIds()
+		# Navigate to the specified questionId if provided
+		# Load the id if not already loaded
 		if questionId? and @currentId() != questionId
 			i = @questionIds().indexOf(questionId)
 			if i > -1
 				@questionIndex(i)
-			else
+			else if Questions.findOne(questionId)
 				l = @appendId(questionId)
 				@questionIndex(l - 1)
-			console.log @questionIds(), i, l, questionId
-		if @currentId()? and window.location.pathname != @currentRoute()
-			# Meteor.Router.to(@currentRoute())
-			console.log window.location.pathname, @currentRoute()
+			else
+				Meteor.Router.to("/404")
+			console.log 3, @questionIds(), i, l, questionId
+		# Make sure the url matches the current question id
+		# if @currentId()? and window.location.pathname != @currentRoute()
+		#	console.log 4, @currentId(), @currentQuestion()['question'], window.location.pathname, @currentRoute()
+		#	Meteor.Router.to(@currentRoute())
+		#	# history.pushState({page: @currentRoute()}, @currentRoute(), @currentRoute())
 
 	@findAndAppendMoreQuestions: ->
 		@questionIds(_.union(@questionIds(), unansweredQuestionIds(3)))
@@ -148,6 +157,8 @@ class QuestionList
 		Questions.findOne(@currentId())
 	@currentRoute: ->
 		"/questions/#{@currentId()}"
+	@routeToCurrent: ->
+		Meteor.Router.to(@currentRoute())
 
 	@nextId: (inc = 1) ->
 	   @questionIds()[@questionIndex() + inc] 
@@ -164,14 +175,12 @@ class QuestionList
 		if options.skip == true then Meteor.call "skipQuestion", { questionId: @currentId() }
 		@addQuestionsIfLow()
 		if @nextId(1)? then @questionIndex(@questionIndex() + 1)
-		# Meteor.Router.to("/questions/#{@currentId()}")
-		@currentId()
+		# @currentId()
 
 	@goBack: ->
 		index = @questionIndex()
 		if index > 0 then @questionIndex(index - 1)
-		# Meteor.Router.to("/questions/#{@currentId()}")
-		@currentId()
+		# @currentId()
 
 	@goToNextUnanswered: ->
 		@goForward({skip: true}) if @nextId(1)? 
@@ -182,6 +191,7 @@ class QuestionList
 		@goBack() while currentUserHasAnswered(@currentId()) and @previousId(1)?        
 
 
+# TODO: REFACTOR: move this template to its own files
 # ** question **
 
 Template.question.events
@@ -210,6 +220,11 @@ Template.question.events
 				analytics.track 'question answered success',
 					questionId: questionId
 					answer: answer
+
+	# share link
+	"click input#question-share-link": (event, template) ->
+		event.preventDefault()
+		$(event.currentTarget).select()
 
 	# vote
 	"click button.vote": (event, template) ->
@@ -272,6 +287,9 @@ Template.question.helpers
 	currentUserHasAnswered: (questionId) ->
 		currentUserHasAnswered(questionId)
 
+	link: ->
+		window.location.origin + QuestionList.currentRoute()
+
 	showMeta: (questionId) ->
 		not Meteor.userId() or currentUserHasAnswered(questionId)
 
@@ -332,6 +350,14 @@ Template.question.rendered = ->
 			resizeIframe($iframe, width)
 		$(window).resize()
 		$("textarea.new-comment").autosize()
+
+		clip = new ZeroClipboard($(".share .link button.copy"))
+		clip.on 'complete', ( client, args ) ->
+			$input = $("input#question-share-link")
+			link = $input.val()
+			$input.val('Copied to clipboard')
+			wait 2000, =>
+				$input.val(link)
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph

@@ -7,10 +7,10 @@
 	#	questions_page: 'singleQuestionReady'
 
 	question = (id) ->
-		# Meteor.startup ->
-		#	Meteor.autorun ->
-		QuestionList.namespace = "questionsAnswer"
-		QuestionList.initialize(id)
+		Meteor.startup ->
+			Meteor.autorun ->
+				QuestionList.namespace = "questionsAnswer"
+				QuestionList.initialize(id)
 		'questionsAnswer'
 
 	Meteor.Router.add
