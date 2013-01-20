@@ -6,19 +6,26 @@
 	#	questions_asked: 'askedQuestionsReady'
 	#	questions_page: 'singleQuestionReady'
 
+	question = (id) ->
+		# Meteor.startup ->
+		#	Meteor.autorun ->
+		QuestionList.namespace = "questionsAnswer"
+		QuestionList.initialize(id)
+		'questionsAnswer'
 
 	Meteor.Router.add
-		"/": "questionsAnswer"
+		"/": question
 		"/about": "about"
-		"/answer": "questionsAnswer"
+		"/answer": question
 		"/ask": "questionsNew"
 		"/faq": "faq"
 		"/results": "questionsIndex"
 		"/privacy": "privacy"
 		"/profile": "questionsIndex"
 		"/questions": "questionsIndex"
-		"/questions/answer": "questionsAnswer"
+		"/questions/answer": question
 		"/questions/new": "questionsNew"
+		"/questions/:id": question 
 		"/settings": "settings"
 		"/tos": "tos"
 		"*": "404"

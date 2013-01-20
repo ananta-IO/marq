@@ -102,22 +102,37 @@ class QuestionList
 	@namespace: 'default'
 
 	@initialize: (questionId = null) ->
-		if questionId
-			@questionIds([questionId])
-			@questionIndex(0)
-		else if _.isEmpty(@questionIds())
+		if _.isEmpty(@questionIds())
 			ids = answeredQuestionIds() or []
 			index = ids.length
 			@questionIds(ids)
 			@findAndAppendMoreQuestions()
 			if index > 0 then @questionIndex(index - 1) else @questionIndex(0)
 			if @nextId()? then @questionIndex(index)
+			console.log @questionIds()
+		if questionId? and @currentId() != questionId
+			i = @questionIds().indexOf(questionId)
+			if i > -1
+				@questionIndex(i)
+			else
+				l = @appendId(questionId)
+				@questionIndex(l - 1)
+			console.log @questionIds(), i, l, questionId
+		if @currentId()? and window.location.pathname != @currentRoute()
+			# Meteor.Router.to(@currentRoute())
+			console.log window.location.pathname, @currentRoute()
 
 	@findAndAppendMoreQuestions: ->
 		@questionIds(_.union(@questionIds(), unansweredQuestionIds(3)))
 
 	@addQuestionsIfLow: ->
 		if !@nextId(2)? then @findAndAppendMoreQuestions()
+
+	@appendId: (id) ->
+		ids = @questionIds()
+		l = ids.push(id)
+		@questionIds(ids)
+		l
 
 	@questionIds: (ids = false) ->
 		unless ids == false then Session.set("#{@namespace}-questionIds", ids)
@@ -131,6 +146,8 @@ class QuestionList
 		@questionIds()[@questionIndex()]
 	@currentQuestion: ->
 		Questions.findOne(@currentId())
+	@currentRoute: ->
+		"/questions/#{@currentId()}"
 
 	@nextId: (inc = 1) ->
 	   @questionIds()[@questionIndex() + inc] 
@@ -147,11 +164,13 @@ class QuestionList
 		if options.skip == true then Meteor.call "skipQuestion", { questionId: @currentId() }
 		@addQuestionsIfLow()
 		if @nextId(1)? then @questionIndex(@questionIndex() + 1)
+		# Meteor.Router.to("/questions/#{@currentId()}")
 		@currentId()
 
 	@goBack: ->
 		index = @questionIndex()
 		if index > 0 then @questionIndex(index - 1)
+		# Meteor.Router.to("/questions/#{@currentId()}")
 		@currentId()
 
 	@goToNextUnanswered: ->
