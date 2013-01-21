@@ -43,6 +43,7 @@ analyticsRequest = ->
                     work: JSON.stringify(getWork(user))
                     inspirationalPeople: JSON.stringify(getInspirationalPeople(user))
                     createdAt: user.createdAt
+                    lastSeen: (new Date)
                     karma: user.karma
                     answerQuestionCount: user.answerQuestionCount
                     askQuestionCount: user.askQuestionCount
