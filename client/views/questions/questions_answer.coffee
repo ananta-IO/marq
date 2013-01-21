@@ -325,7 +325,6 @@ Template.question.rendered = ->
 	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options	
 
-
 	wait 2000, =>
 		addthis_share =
 			url: (window.location.origin + QuestionList.currentRoute())

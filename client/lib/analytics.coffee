@@ -19,13 +19,16 @@ analytics.load = (apiKey) ->
         
 analyticsRequest = ->
     segementIoId = getSetting('segmentIoId')
-    if segementIoId and analytics.load
-        # console.log "analytics"
-        analytics.load(segementIoId)
+    if segementIoId
+        if analytics.load
+            # console.log "analytics load"
+            analytics.load(segementIoId)
 
         Meteor.autorun ->
             user = Meteor.user()
-            if user and user.profile and (user.profile.facebook or user.profile.google or user.profile.email) and user.answerQuestionCount and user.askQuestionCount     
+            # console.log "try ident", user
+            if analytics.identify? and user? and user._id? and user.profile? and (user.profile.facebook? or user.profile.google? or user.profile.name? or user.profile.email?) and user.answerQuestionCount? and user.askQuestionCount? and user.castVoteCount? and user.postCommentCount? and user.viewQuestionCount?
+                # console.log "analytics identify"
                 analytics.identify user._id,
                     name: getName(user)
                     email: getEmail(user)
@@ -43,4 +46,7 @@ analyticsRequest = ->
                     karma: user.karma
                     answerQuestionCount: user.answerQuestionCount
                     askQuestionCount: user.askQuestionCount
+                    castVoteCount: user.castVoteCount
+                    postCommentCount: user.postCommentCount
+                    viewQuestionCount: user.viewQuestionCount
                     avatar: getAvatarUri(user)

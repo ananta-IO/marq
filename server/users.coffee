@@ -50,8 +50,9 @@ Accounts.onCreateUser (options, user) ->
 			user.karma = 101
 
 	# TODO: fetch twitter data
-	# if user.services.twitter
-	#	user.karma = 101
+	if user.services.twitter
+		user.profile.twitter = {}
+		user.karma = 101
 
 
 	return user
