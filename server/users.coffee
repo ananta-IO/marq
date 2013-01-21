@@ -49,5 +49,9 @@ Accounts.onCreateUser (options, user) ->
 			user.profile.google = result.data
 			user.karma = 101
 
+	# TODO: fetch twitter data
+	# if user.services.twitter
+	#	user.karma = 101
+
 
 	return user

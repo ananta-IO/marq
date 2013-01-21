@@ -37,6 +37,11 @@ Template.questionsAnswer.events
 		analytics.track 'question previous unanswered click',
 			questionId: QuestionList.currentId()
 
+	"click a.join": (event, template) ->
+		event.preventDefault()
+		Accounts._loginButtonsSession.set('dropdownVisible', true)
+
+
 Template.questionsAnswer.helpers
 	# Current/Primary Question
 	question: ->
@@ -82,10 +87,10 @@ Template.questionsAnswer.rendered = ->
 		analytics.track 'question previous unanswered keyboard',
 			questionId: QuestionList.currentId()
 
-	$flip = $('.flip')
-	$answerView = $('.main-answer-view')
-	if $flip and $answerView
-		$flip.css 'height', $answerView.outerHeight()
+	# $flip = $('.flip')
+	# $answerView = $('.main-answer-view')
+	# if $flip and $answerView
+	#	$flip.css 'height', $answerView.outerHeight()
 
 	QuestionList.addQuestionsIfLow()
 
@@ -96,15 +101,18 @@ Template.questionsAnswer.created = ->
 			QuestionList.namespace = "questionsAnswer"
 			QuestionList.initialize()
 
+
+# TODO: REFACTOR: move this class elsewhere
 # Helper class to manage the currently active questions in the session
 class QuestionList
 
 	@namespace: 'default'
 
-	@initialize: (questionId = null) ->
-		if questionId
-			@questionIds([questionId])
+	@initialize: (options = {}) ->
+		if options.questionId?
+			@questionIds([options.questionId])
 			@questionIndex(0)
+		# Load all answered and a few unanswered question ids
 		else if _.isEmpty(@questionIds())
 			ids = answeredQuestionIds() or []
 			index = ids.length
@@ -131,6 +139,8 @@ class QuestionList
 		@questionIds()[@questionIndex()]
 	@currentQuestion: ->
 		Questions.findOne(@currentId())
+	@currentRoute: ->
+		"/questions/#{@currentId()}"
 
 	@nextId: (inc = 1) ->
 	   @questionIds()[@questionIndex() + inc] 
@@ -163,6 +173,7 @@ class QuestionList
 		@goBack() while currentUserHasAnswered(@currentId()) and @previousId(1)?        
 
 
+# TODO: REFACTOR: move this template to its own files
 # ** question **
 
 Template.question.events
@@ -191,6 +202,11 @@ Template.question.events
 				analytics.track 'question answered success',
 					questionId: questionId
 					answer: answer
+
+	# share link
+	"click input#question-share-link": (event, template) ->
+		event.preventDefault()
+		$(event.currentTarget).select()
 
 	# vote
 	"click button.vote": (event, template) ->
@@ -253,6 +269,9 @@ Template.question.helpers
 	currentUserHasAnswered: (questionId) ->
 		currentUserHasAnswered(questionId)
 
+	link: ->
+		window.location.origin + QuestionList.currentRoute()
+
 	showMeta: (questionId) ->
 		not Meteor.userId() or currentUserHasAnswered(questionId)
 
@@ -292,6 +311,7 @@ Template.question.helpers
 		ownerId == Meteor.userId()
 
 Template.question.created = ->
+	# TODO: FIX: make sure this tracks a view on every question and not just the first one
 	question = QuestionList.currentQuestion()
 	if question
 		analytics.track 'question viewed',
@@ -303,16 +323,29 @@ Template.question.created = ->
 Template.question.rendered = ->
 	# Track view
 	options = { questionId: QuestionList.currentId() }
-	Meteor.call 'viewQuestion', options
+	Meteor.call 'viewQuestion', options	
 
-	# TODO: make sure the template is loaded
-	wait 1500, () =>
-		$(window).resize =>
+
+	wait 2000, =>
+		addthis_share =
+			url: (window.location.origin + QuestionList.currentRoute())
+			title: QuestionList.currentQuestion().question
+			description: "Please give me your feedback."
+		unless window.addthis
+			initAddThis(addthis_share)
+		else
+			addthis.toolbox(@find(".addthis_toolbox"), {}, addthis_share)
+
+		$(window).resize ->
 			$iframe = $('#embed-html iframe')
 			width = $('#embed-html').innerWidth()
 			resizeIframe($iframe, width)
 		$(window).resize()
-		$("textarea.new-comment").autosize()
+
+		$('textarea.new-comment').autosize()
+
+		# TODO: make this work more consistently before enabling it
+		# initZeroClip($(".share .link button.copy"), $("input#question-share-link"))
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph

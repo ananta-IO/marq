@@ -161,11 +161,22 @@ input.press-enter, textarea.press-enter
 			animation-delay: 0s
 			animation-iteration-count: infinite
 
+#questions-show
+	margin-top: 20px
+
 .question
 	.answer-choices
 		.answer
 			text-align: left
 			padding-left: 15px
+
+	.share
+		opacity: 0.3
+		transition: opacity 0.5s ease-in-out
+		transition-delay:1s
+		&:hover
+			transition-delay:0s
+			opacity: 1
 
 	.comments
 		.past-comments

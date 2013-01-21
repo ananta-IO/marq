@@ -6,6 +6,9 @@
 	#	questions_asked: 'askedQuestionsReady'
 	#	questions_page: 'singleQuestionReady'
 
+	question = (id) ->
+		Session.set('selectedQuestionId', id) 
+		'questionsShow'
 
 	Meteor.Router.add
 		"/": "questionsAnswer"
@@ -19,6 +22,7 @@
 		"/questions": "questionsIndex"
 		"/questions/answer": "questionsAnswer"
 		"/questions/new": "questionsNew"
+		"/questions/:id": question 
 		"/settings": "settings"
 		"/tos": "tos"
 		"*": "404"
