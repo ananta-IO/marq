@@ -103,7 +103,8 @@ class QuestionList
 
 	@namespace: 'default'
 
-	@initialize: (questionId = null) ->
+	@initialize: ->
+		console.log 1, @namespace
 		# Load all answered and a few unanswered question ids
 		if _.isEmpty(@questionIds())
 			ids = answeredQuestionIds() or []
@@ -113,18 +114,6 @@ class QuestionList
 			if index > 0 then @questionIndex(index - 1) else @questionIndex(0)
 			if @nextId()? then @questionIndex(index)
 			console.log 2, @questionIds()
-		# Navigate to the specified questionId if provided
-		# Load the id if not already loaded
-		if questionId? and @currentId() != questionId
-			i = @questionIds().indexOf(questionId)
-			if i > -1
-				@questionIndex(i)
-			else if Questions.findOne(questionId)
-				l = @appendId(questionId)
-				@questionIndex(l - 1)
-			else
-				Meteor.Router.to("/404")
-			console.log 3, @questionIds(), i, l, questionId
 		# Make sure the url matches the current question id
 		# if @currentId()? and window.location.pathname != @currentRoute()
 		#	console.log 4, @currentId(), @currentQuestion()['question'], window.location.pathname, @currentRoute()
@@ -151,7 +140,17 @@ class QuestionList
 		unless index == false then Session.set("#{@namespace}-questionIndex", index)
 		Session.get("#{@namespace}-questionIndex") or 0
 
-	@currentId: ->
+	@currentId: (id = false) ->
+		# Navigate to the specified id if provided
+		# Load the id if not already loaded
+		if id != false and @questionIds()[@questionIndex()] != id
+			i = @questionIds().indexOf(id)
+			unless i == -1
+				@questionIndex(i)
+			else
+				l = @appendId(id)
+				@questionIndex(l - 1)
+			console.log 3, @questionIds(), i, l, id
 		@questionIds()[@questionIndex()]
 	@currentQuestion: ->
 		Questions.findOne(@currentId())
@@ -175,11 +174,13 @@ class QuestionList
 		if options.skip == true then Meteor.call "skipQuestion", { questionId: @currentId() }
 		@addQuestionsIfLow()
 		if @nextId(1)? then @questionIndex(@questionIndex() + 1)
+		# @routeToCurrent()
 		# @currentId()
 
 	@goBack: ->
 		index = @questionIndex()
 		if index > 0 then @questionIndex(index - 1)
+		# @routeToCurrent()
 		# @currentId()
 
 	@goToNextUnanswered: ->
@@ -329,6 +330,7 @@ Template.question.helpers
 		ownerId == Meteor.userId()
 
 Template.question.created = ->
+	# TODO: FIX: make sure this tracks a view on every question and not just the first one
 	question = QuestionList.currentQuestion()
 	if question
 		analytics.track 'question viewed',
@@ -340,24 +342,19 @@ Template.question.created = ->
 Template.question.rendered = ->
 	# Track view
 	options = { questionId: QuestionList.currentId() }
-	Meteor.call 'viewQuestion', options
+	Meteor.call 'viewQuestion', options		
 
-	# TODO: make sure the template is loaded
-	wait 1500, () =>
-		$(window).resize =>
+	wait 2000, =>
+		console.log 'wat'
+		$(window).resize ->
 			$iframe = $('#embed-html iframe')
 			width = $('#embed-html').innerWidth()
 			resizeIframe($iframe, width)
 		$(window).resize()
-		$("textarea.new-comment").autosize()
 
-		clip = new ZeroClipboard($(".share .link button.copy"))
-		clip.on 'complete', ( client, args ) ->
-			$input = $("input#question-share-link")
-			link = $input.val()
-			$input.val('Copied to clipboard')
-			wait 2000, =>
-				$input.val(link)
+		$('textarea.new-comment').autosize()
+
+		initZeroClip($(".share .link button.copy"), $("input#question-share-link"))
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph

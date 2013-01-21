@@ -10,7 +10,8 @@
 		Meteor.startup ->
 			Meteor.autorun ->
 				QuestionList.namespace = "questionsAnswer"
-				QuestionList.initialize(id)
+				QuestionList.initialize()
+				QuestionList.currentId(id)
 		'questionsAnswer'
 
 	Meteor.Router.add
