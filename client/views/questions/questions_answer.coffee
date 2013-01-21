@@ -37,6 +37,11 @@ Template.questionsAnswer.events
 		analytics.track 'question previous unanswered click',
 			questionId: QuestionList.currentId()
 
+	"click a.join": (event, template) ->
+		event.preventDefault()
+		Accounts._loginButtonsSession.set('dropdownVisible', true)
+
+
 Template.questionsAnswer.helpers
 	# Current/Primary Question
 	question: ->
@@ -82,19 +87,19 @@ Template.questionsAnswer.rendered = ->
 		analytics.track 'question previous unanswered keyboard',
 			questionId: QuestionList.currentId()
 
-	$flip = $('.flip')
-	$answerView = $('.main-answer-view')
-	if $flip and $answerView
-		$flip.css 'height', $answerView.outerHeight()
+	# $flip = $('.flip')
+	# $answerView = $('.main-answer-view')
+	# if $flip and $answerView
+	#	$flip.css 'height', $answerView.outerHeight()
 
 	QuestionList.addQuestionsIfLow()
 
 # Created
-# Template.questionsAnswer.created = ->
-#	Meteor.startup ->
-#		Meteor.autorun ->
-#			QuestionList.namespace = "questionsAnswer"
-#			QuestionList.initialize()
+Template.questionsAnswer.created = ->
+	Meteor.startup ->
+		Meteor.autorun ->
+			QuestionList.namespace = "questionsAnswer"
+			QuestionList.initialize()
 
 
 # TODO: REFACTOR: move this class elsewhere
@@ -103,34 +108,24 @@ class QuestionList
 
 	@namespace: 'default'
 
-	@initialize: ->
-		console.log 1, @namespace
+	@initialize: (options = {}) ->
+		if options.questionId?
+			@questionIds([options.questionId])
+			@questionIndex(0)
 		# Load all answered and a few unanswered question ids
-		if _.isEmpty(@questionIds())
+		else if _.isEmpty(@questionIds())
 			ids = answeredQuestionIds() or []
 			index = ids.length
 			@questionIds(ids)
 			@findAndAppendMoreQuestions()
 			if index > 0 then @questionIndex(index - 1) else @questionIndex(0)
 			if @nextId()? then @questionIndex(index)
-			console.log 2, @questionIds()
-		# Make sure the url matches the current question id
-		# if @currentId()? and window.location.pathname != @currentRoute()
-		#	console.log 4, @currentId(), @currentQuestion()['question'], window.location.pathname, @currentRoute()
-		#	Meteor.Router.to(@currentRoute())
-		#	# history.pushState({page: @currentRoute()}, @currentRoute(), @currentRoute())
 
 	@findAndAppendMoreQuestions: ->
 		@questionIds(_.union(@questionIds(), unansweredQuestionIds(3)))
 
 	@addQuestionsIfLow: ->
 		if !@nextId(2)? then @findAndAppendMoreQuestions()
-
-	@appendId: (id) ->
-		ids = @questionIds()
-		l = ids.push(id)
-		@questionIds(ids)
-		l
 
 	@questionIds: (ids = false) ->
 		unless ids == false then Session.set("#{@namespace}-questionIds", ids)
@@ -140,24 +135,12 @@ class QuestionList
 		unless index == false then Session.set("#{@namespace}-questionIndex", index)
 		Session.get("#{@namespace}-questionIndex") or 0
 
-	@currentId: (id = false) ->
-		# Navigate to the specified id if provided
-		# Load the id if not already loaded
-		if id != false and @questionIds()[@questionIndex()] != id
-			i = @questionIds().indexOf(id)
-			unless i == -1
-				@questionIndex(i)
-			else
-				l = @appendId(id)
-				@questionIndex(l - 1)
-			console.log 3, @questionIds(), i, l, id
+	@currentId: ->
 		@questionIds()[@questionIndex()]
 	@currentQuestion: ->
 		Questions.findOne(@currentId())
 	@currentRoute: ->
 		"/questions/#{@currentId()}"
-	@routeToCurrent: ->
-		Meteor.Router.to(@currentRoute())
 
 	@nextId: (inc = 1) ->
 	   @questionIds()[@questionIndex() + inc] 
@@ -174,14 +157,12 @@ class QuestionList
 		if options.skip == true then Meteor.call "skipQuestion", { questionId: @currentId() }
 		@addQuestionsIfLow()
 		if @nextId(1)? then @questionIndex(@questionIndex() + 1)
-		# @routeToCurrent()
-		# @currentId()
+		@currentId()
 
 	@goBack: ->
 		index = @questionIndex()
 		if index > 0 then @questionIndex(index - 1)
-		# @routeToCurrent()
-		# @currentId()
+		@currentId()
 
 	@goToNextUnanswered: ->
 		@goForward({skip: true}) if @nextId(1)? 
@@ -342,10 +323,19 @@ Template.question.created = ->
 Template.question.rendered = ->
 	# Track view
 	options = { questionId: QuestionList.currentId() }
-	Meteor.call 'viewQuestion', options		
+	Meteor.call 'viewQuestion', options	
+
 
 	wait 2000, =>
-		console.log 'wat'
+		addthis_share =
+			url: (window.location.origin + QuestionList.currentRoute())
+			title: QuestionList.currentQuestion().question
+			description: "Please give me your feedback."
+		unless window.addthis
+			initAddThis(addthis_share)
+		else
+			addthis.toolbox(@find(".addthis_toolbox"), {}, addthis_share)
+
 		$(window).resize ->
 			$iframe = $('#embed-html iframe')
 			width = $('#embed-html').innerWidth()
@@ -354,7 +344,8 @@ Template.question.rendered = ->
 
 		$('textarea.new-comment').autosize()
 
-		initZeroClip($(".share .link button.copy"), $("input#question-share-link"))
+		# TODO: make this work more consistently before enabling it
+		# initZeroClip($(".share .link button.copy"), $("input#question-share-link"))
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph
