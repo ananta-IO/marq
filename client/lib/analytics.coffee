@@ -51,3 +51,4 @@ analyticsRequest = ->
                     postCommentCount: user.postCommentCount
                     viewQuestionCount: user.viewQuestionCount
                     avatar: getAvatarUri(user)
+                    syncedAccount: JSON.stringify(getSyncedAccounts(user))

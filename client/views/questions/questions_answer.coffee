@@ -321,39 +321,50 @@ Template.question.created = ->
 
 # TODO: make this take the quesitonId insead of assuming currentQuestion()
 Template.question.rendered = ->
+	# Trigger rendering of everything that depends on questions being loaded
+	if Session.get('allQuestionsLoaded') then $(window).trigger('allQuestionsLoaded')
+	
 	# Track view
 	options = { questionId: QuestionList.currentId() }
 	Meteor.call 'viewQuestion', options	
 
-	wait 2000, =>
-		addthis_share =
-			url: (window.location.origin + QuestionList.currentRoute())
-			title: QuestionList.currentQuestion().question
-			description: "Please give me your feedback."
-		unless window.addthis
-			initAddThis(addthis_share)
-		else
-			addthis.toolbox(@find(".addthis_toolbox"), {}, addthis_share)
+	# Load Share Buttons
+	$(window).on 'allQuestionsLoaded', =>
+		if QuestionList.currentQuestion()
+			addthis_share =
+				url: (window.location.origin + QuestionList.currentRoute())
+				title: QuestionList.currentQuestion().question
+				description: "Please share your feedback."
+			unless window.addthis
+				initAddThis(addthis_share)
+			else
+				addthis.toolbox(@find(".addthis_toolbox"), {}, addthis_share)
 
-		$(window).resize ->
-			$iframe = $('#embed-html iframe')
-			width = $('#embed-html').innerWidth()
+	# Resize Iframe if one exists
+	$(window).resize =>
+		$iframe = $(@find('#embed-html iframe'))
+		if $iframe.length > 0
+			width = $(@find('#embed-html')).innerWidth()
 			resizeIframe($iframe, width)
-		$(window).resize()
+	$(window).resize()
 
-		$('textarea.new-comment').autosize()
-
-		# TODO: make this work more consistently before enabling it
-		# initZeroClip($(".share .link button.copy"), $("input#question-share-link"))
+	# TODO: make this work more consistently before enabling it
+	# initZeroClip($(".share .link button.copy"), $("input#question-share-link"))
 
 	if not Meteor.userId() or currentUserHasAnswered(QuestionList.currentId())
 		# Append D3 graph
-		dataSet = []
-		_.map QuestionList.currentQuestion().answersTally, (value, key) ->
-			dataSet.push {legendLabel: key, magnitude: value, link: "#"}
-		drawPie("questionsAnswerPie", dataSet, "#question-#{QuestionList.currentId()} .chart", "colorScale20", 10, 100, 30, 0)
+		# TODO: confirm that this still live updates
+		$(window).on 'allQuestionsLoaded', =>
+			if QuestionList.currentQuestion() and $(@find("#question-#{QuestionList.currentId()} .chart svg")).length == 0
+				dataSet = []
+				_.map QuestionList.currentQuestion().answersTally, (value, key) ->
+					dataSet.push {legendLabel: key, magnitude: value, link: "#"}
+				drawPie("questionsAnswerPie", dataSet, @find("#question-#{QuestionList.currentId()} .chart"), "colorScale20", 10, 100, 30, 0)
 
 		# Treat comments like a chat
 		$pastComments = $(".past-comments")
 		$pastComments.scrollTo($pastComments.find(".comment").last())
+
+		# Enable autosize on comment textarea
+		$('textarea.new-comment').autosize()
 

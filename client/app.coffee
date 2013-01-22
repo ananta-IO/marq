@@ -7,13 +7,17 @@ Meteor.subscribe 'settings', ->
 
 # ** Users **
 
-Meteor.subscribe('currentUser')
+Meteor.subscribe 'currentUser', ->
+	Session.set('currentUserLoaded', true)
+	$(window).trigger('currentUserLoaded')
 # Meteor.subscribe('allUsers')
 
 
 # ** Questions **
 
-Meteor.subscribe('allQuestions')
+Meteor.subscribe 'allQuestions', ->
+	Session.set('allQuestionsLoaded', true)
+	$(window).trigger('allQuestionsLoaded')
 
 # QUESTIONS_PER_PAGE = 3
 

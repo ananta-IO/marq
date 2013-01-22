@@ -148,3 +148,12 @@ getAvatarUri = (user) ->
 		user.profile.google.picture
 	else
 		"/assets/BlankProfileImage.jpg"
+
+getSyncedAccounts = (user) ->
+	accounts = []
+	if user.services
+		accounts.push('facebook') if user.services.facebook
+		accounts.push('twitter') if user.services.twitter
+		accounts.push('google') if user.services.google
+		accounts.push('github') if user.services.github
+	accounts
