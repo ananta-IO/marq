@@ -133,14 +133,15 @@ Template.questionsNew.rendered = ->
 		cursor: 'move'
 		update: (e, ui) =>
 			Session.set 'answerChoices', _.without(_.uniq(_.map(@findAll("input.answer-choice"), (el) -> $.trim(el.value))), '')
-	wait 1500, () =>
-		unless @find(".pick-image-widget")
+
+	wait 500, =>
+		if $(@find(".pick-image-widget")).length == 0
 			filepicker.constructWidget(@find("#new-question-image"))
+		
 		# Resize iframes
-		$(window).resize =>
-			$iframe = $(@find('iframe'))
+		$iframe = $(@find('iframe'))
+		if $iframe.length > 0
 			width = $(@find('#embed-html')).innerWidth()
 			resizeIframe($iframe, width)
-		$(window).resize()
 
 

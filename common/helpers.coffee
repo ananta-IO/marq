@@ -4,7 +4,7 @@ getSetting = (setting) ->
 
 scrollToTop = (speed = 400) ->
 	$selector = $("html, body")
-	if $selector
+	if $selector.length > 0
 		$selector.animate({ scrollTop: 0 }, speed)
 
 resizeIframe = ($iframe, newWidth) ->
