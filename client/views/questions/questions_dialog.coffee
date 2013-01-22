@@ -16,4 +16,4 @@ Template.questionsDialog.question = ->
 
 Template.questionsDialog.created = ->
 	QuestionList.namespace = "questionsDialog"
-	QuestionList.initialize(Session.get("questionsDialogQuestionId"))
+	QuestionList.initialize({questionId: Session.get("questionsDialogQuestionId")})
