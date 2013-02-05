@@ -258,6 +258,7 @@ Template.question.events
 				else
 					Session.set("questionAlert", null)
 					template.find("textarea.new-comment").value = null
+					template.find("textarea.new-comment").focus
 					analytics.track 'question commented success',
 						questionId: questionId
 						comment: comment
